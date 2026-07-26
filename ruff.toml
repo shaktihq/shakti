@@ -1,0 +1,10 @@
+line-length = 100
+target-version = "py312"
+
+[lint]
+ignore = [
+    "BLE001",  # broad exception catch — intentional in framework internals
+    "S110",    # try-except-pass — intentional for ws close
+    "TRY401",  # redundant exception in logging.exception — stylistic
+    "TRY004",  # prefer TypeError — RuntimeError is correct here
+]

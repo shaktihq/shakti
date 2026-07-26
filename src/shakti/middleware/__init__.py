@@ -12,4 +12,4 @@ __all__ = [
     "build_middleware_chain",
 ]
 
-from shakti.middleware.ratelimit import RateLimitMiddleware
+from shakti.middleware.ratelimit import RateLimitMiddleware  # noqa: F401

@@ -44,7 +44,7 @@ class DocumentAI:
 
     def __init__(
         self,
-        ai: "AI",
+        ai: AI,
         *,
         prefix: str = "/docs",
         chunk_size: int = 400,
@@ -58,7 +58,7 @@ class DocumentAI:
     # ------------------------------------------------------------------
     # App integration
     # ------------------------------------------------------------------
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         app.container.register_instance(DocumentAI, self)
         app.include_router(self._build_router(), prefix=self.prefix)
 
@@ -201,7 +201,7 @@ class DocumentAI:
         # Parse JSON response
         try:
             # Strip markdown code fences if present
-            clean = raw.strip().strip("```json").strip("```").strip()
+            clean = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
             extracted = json.loads(clean)
         except json.JSONDecodeError:
             extracted = {"raw_response": raw}
@@ -227,7 +227,7 @@ class DocumentAI:
         )
         raw = await self.ai.chat(doc.text[:1500], system=system)
         try:
-            clean = raw.strip().strip("```json").strip("```").strip()
+            clean = raw.strip().removeprefix("```json").removeprefix("```").removesuffix("```").strip()
             result = json.loads(clean)
         except json.JSONDecodeError:
             result = {"type": "unknown", "confidence": 0, "raw": raw}
