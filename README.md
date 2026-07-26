@@ -5,7 +5,7 @@
 > Born in India. Built for the world.
 
 ```bash
-pip install "shakti[server]"
+pip install "shakti-framework[all]" 
 ```
 
 ---
@@ -107,7 +107,7 @@ async def chat(ws: WebSocket) -> None:
 
 ```bash
 pip install shakti                    # core only
-pip install "shakti[server]"          # + uvicorn
+pip install "shakti-framework[all]"        # + uvicorn
 pip install "shakti[orm]"             # + SQLAlchemy
 pip install "shakti[auth]"            # + JWT + bcrypt
 pip install "shakti[ai]"              # + Claude/OpenAI
@@ -147,7 +147,7 @@ auth:
 
 ai:
   provider: anthropic
-  model: claude-sonnet-4-6
+  model: claude-sonnet-4-pip install "shakti-framework[all]"
   api_key: ${ANTHROPIC_API_KEY}
   system_prompt: "You are a helpful assistant."
 ```
