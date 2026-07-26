@@ -218,6 +218,33 @@ You instantly get:
 
 ---
 
+## Sample Response
+
+Hit any auto-generated endpoint and get clean JSON back, no boilerplate:
+
+```bash
+curl http://127.0.0.1:8000/posts
+```
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Hello, Shakti",
+    "body": "My first post using Shakti Framework.",
+    "views": 42
+  },
+  {
+    "id": 2,
+    "title": "Async ORM in action",
+    "body": "Migrations, repositories, and CRUD in one command.",
+    "views": 17
+  }
+]
+```
+
+---
+
 ## Install
 
 === "Everything"
