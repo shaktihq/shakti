@@ -18,7 +18,7 @@ class Headers:
         ]
 
     @classmethod
-    def from_scope(cls, scope: Scope) -> "Headers":
+    def from_scope(cls, scope: Scope) -> Headers:
         return cls(list(scope.get("headers") or []))
 
     @property

@@ -58,7 +58,7 @@ def cmd_new(args: argparse.Namespace) -> int:
         target.write_text(content, encoding="utf-8")
 
     print(f"✔ Created project {name!r} at {root}")
-    print("")
+    print()
     print("Next steps:")
     print(f"  cd {name}")
     print("  pip install -r requirements.txt")
@@ -125,7 +125,7 @@ def cmd_generate(args: argparse.Namespace) -> int:
             files = write_crud(project_dir, name)
             for f in files:
                 print(f"✔ {f.relative_to(project_dir)}")
-            print(f"\nMount in app/main.py:")
+            print("\nMount in app/main.py:")
             snake = re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
             print(f"  from app.routers.{snake} import router as {snake}_router")
             print(f"  app.include_router({snake}_router)")
@@ -139,11 +139,11 @@ def cmd_generate(args: argparse.Namespace) -> int:
             for f in [*model_files, *crud_files]:
                 print(f"✔ {f.relative_to(project_dir)}")
             snake = re.sub(r"(?<!^)(?=[A-Z])", "_", name).lower()
-            print(f"\nMount router and run migrations:")
+            print("\nMount router and run migrations:")
             print(f"  from app.routers.{snake} import router as {snake}_router")
             print(f"  app.include_router({snake}_router)")
             print(f"  shakti makemigrations 'add {snake}'")
-            print(f"  shakti migrate")
+            print("  shakti migrate")
         else:
             print(f"error: unknown generate target {kind!r}. Use: model | crud | api", file=sys.stderr)
             return 1

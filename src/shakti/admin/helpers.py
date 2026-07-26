@@ -4,10 +4,10 @@ from __future__ import annotations
 
 import csv
 import io
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any
 from collections import deque
+from dataclasses import dataclass
+from datetime import UTC, datetime
+from typing import Any
 
 
 def fmt(value: Any) -> str:
@@ -54,7 +54,7 @@ class ActivityLog:
     ) -> None:
         self._log.appendleft(
             ActivityEntry(
-                timestamp=datetime.now(timezone.utc),
+                timestamp=datetime.now(UTC),
                 username=username,
                 action=action,
                 model=model,

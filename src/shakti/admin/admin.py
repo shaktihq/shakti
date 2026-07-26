@@ -14,16 +14,16 @@ Then visit http://127.0.0.1:8000/admin
 
 from __future__ import annotations
 
-import json
+from datetime import UTC
 from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import or_, select
 
-from shakti.admin.helpers import activity_log, fmt, to_csv
+from shakti.admin.helpers import activity_log, to_csv
 from shakti.admin.registry import ModelAdmin
 from shakti.auth.hashing import verify_password
 from shakti.auth.models import User
-from shakti.auth.tokens import create_access_token, decode_token
+from shakti.auth.tokens import decode_token
 from shakti.exceptions import HTTPException
 from shakti.http.request import Request
 from shakti.http.response import HTMLResponse, PlainTextResponse, RedirectResponse, Response
@@ -43,7 +43,7 @@ class Admin:
     def __init__(
         self,
         db: Database,
-        auth: "Auth | None" = None,
+        auth: Auth | None = None,
         *,
         title: str = "Shakti Admin",
         prefix: str = "/admin",
@@ -74,7 +74,7 @@ class Admin:
         )
         self._registry[ma.slug] = ma
 
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         from shakti.http.response import RedirectResponse as _RR
         _prefix = self.prefix
 
@@ -115,14 +115,15 @@ class Admin:
         return user
 
     def _admin_token(self, user: User) -> str:
+        from datetime import datetime, timedelta
+
         import jwt
-        from datetime import datetime, timedelta, timezone
         payload = {
             "sub": str(user.id),
             "username": user.username,
             "type": "admin",
-            "iat": datetime.now(timezone.utc),
-            "exp": datetime.now(timezone.utc) + timedelta(minutes=480),
+            "iat": datetime.now(UTC),
+            "exp": datetime.now(UTC) + timedelta(minutes=480),
         }
         return jwt.encode(payload, self.secret_key, algorithm="HS256")
 
@@ -186,7 +187,7 @@ class Admin:
         @router.get("/")
         async def dashboard(request: Request) -> HTMLResponse:
             from shakti.admin import ui
-            user = _admin._require_admin(request)
+            _admin._require_admin(request)
             stats = []
             async with _admin.db.session() as session:
                 for ma in _admin._registry.values():
@@ -201,7 +202,7 @@ class Admin:
         @router.get("/{model_slug}")
         async def model_list(request: Request, model_slug: str) -> HTMLResponse:
             from shakti.admin import ui
-            user = _admin._require_admin(request)
+            _admin._require_admin(request)
             ma = _admin._registry.get(model_slug)
             if not ma:
                 raise HTTPException(404, f"Model '{model_slug}' not registered")
@@ -213,8 +214,6 @@ class Admin:
             async with _admin.db.session() as session:
                 stmt = select(ma.model)
                 if search and ma.search_fields:
-                    from sqlalchemy import String
-                    from sqlalchemy.orm import InstrumentedAttribute
                     conditions = []
                     for sf in ma.search_fields:
                         col = getattr(ma.model, sf, None)
@@ -236,7 +235,7 @@ class Admin:
         @router.get("/{model_slug}/new")
         async def model_new_form(request: Request, model_slug: str) -> HTMLResponse:
             from shakti.admin import ui
-            user = _admin._require_admin(request)
+            _admin._require_admin(request)
             ma = _admin._registry.get(model_slug)
             if not ma:
                 raise HTTPException(404)

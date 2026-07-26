@@ -1,7 +1,6 @@
 """Professional Admin UI — dark/light mode, no @apply (CDN compatible)."""
 
 from __future__ import annotations
-from typing import Any
 
 ICONS = {
     "dashboard": '<svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="3" width="7" height="7" rx="1" stroke-width="2"/><rect x="3" y="14" width="7" height="7" rx="1" stroke-width="2"/><rect x="14" y="14" width="7" height="7" rx="1" stroke-width="2"/></svg>',
@@ -273,7 +272,7 @@ def dashboard(stats, activity, models_slugs, title, prefix="/admin"):
         </tr>"""
 
     if not act_rows:
-        act_rows = f'<tr><td colspan="5" class="py-16 text-center text-sm text-gray-400 dark:text-gray-600">No activity recorded yet</td></tr>'
+        act_rows = '<tr><td colspan="5" class="py-16 text-center text-sm text-gray-400 dark:text-gray-600">No activity recorded yet</td></tr>'
 
     content = f"""
     <div class="mb-7">

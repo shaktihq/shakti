@@ -90,7 +90,7 @@ class Router:
     def head(self, path: str, **kwargs: Any) -> Callable[[Endpoint], Endpoint]:
         return self.route(path, methods=["HEAD"], **kwargs)
 
-    def include_router(self, router: "Router", *, prefix: str = "") -> None:
+    def include_router(self, router: Router, *, prefix: str = "") -> None:
         """Mount another router's routes under this router.
 
         The included routes keep their own prefix; ``prefix`` (and this

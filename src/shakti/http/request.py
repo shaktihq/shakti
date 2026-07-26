@@ -16,15 +16,15 @@ class Request:
     """Lazy, cached access to everything about the incoming HTTP request."""
 
     __slots__ = (
-        "scope",
-        "state",
-        "path_params",
-        "_receive",
         "_body",
-        "_headers",
-        "_query_params",
         "_cookies",
         "_depends_cache",
+        "_headers",
+        "_query_params",
+        "_receive",
+        "path_params",
+        "scope",
+        "state",
     )
 
     def __init__(self, scope: Scope, receive: Receive) -> None:

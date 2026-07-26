@@ -18,7 +18,7 @@ class User(TimestampMixin, Base):
     role: Mapped[str] = Field(String(50), default="user", nullable=False)
     refresh_token: Mapped[str | None] = Field(String(512), nullable=True)
 
-    api_keys: Mapped[list["APIKey"]] = relationship(
+    api_keys: Mapped[list[APIKey]] = relationship(
         "APIKey", back_populates="user", cascade="all, delete-orphan"
     )
 
@@ -43,7 +43,7 @@ class APIKey(TimestampMixin, Base):
     key_hash: Mapped[str] = Field(String(255), unique=True, nullable=False)
     is_active: Mapped[bool] = Field(Boolean, default=True, nullable=False)
 
-    user: Mapped["User"] = relationship("User", back_populates="api_keys")
+    user: Mapped[User] = relationship("User", back_populates="api_keys")
 
     def __repr__(self) -> str:
         return f"<APIKey id={self.id} name={self.name!r}>"

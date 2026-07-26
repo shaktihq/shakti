@@ -17,10 +17,9 @@ from __future__ import annotations
 
 import inspect
 import re
-from collections.abc import Callable
 from typing import Any, get_type_hints
 
-from shakti.http.response import HTMLResponse, JSONResponse
+from shakti.http.response import HTMLResponse
 from shakti.routing.router import Router
 
 _PY_TO_OPENAPI: dict[str, dict] = {

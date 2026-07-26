@@ -30,7 +30,7 @@ import smtplib
 import ssl
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from shakti.application import Shakti
@@ -55,7 +55,7 @@ class Mailer:
 
     def __init__(
         self,
-        config: "Config | None" = None,
+        config: Config | None = None,
         *,
         host: str = "localhost",
         port: int = 587,
@@ -82,7 +82,7 @@ class Mailer:
         self.use_tls      = use_tls
         self.use_ssl      = use_ssl
 
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         app.container.register_instance(Mailer, self)
 
     async def send(

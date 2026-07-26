@@ -5,7 +5,7 @@ from __future__ import annotations
 import asyncio
 import json as jsonlib
 from collections.abc import Mapping
-from typing import Any
+from typing import Any, Self
 from urllib.parse import urlencode
 
 from shakti.datastructures import Headers
@@ -46,13 +46,13 @@ class TestClient:
         self.app = app
 
     # -- lifecycle -----------------------------------------------------
-    def __enter__(self) -> "TestClient":
+    def __enter__(self) -> Self:
         startup = getattr(self.app, "startup", None)
         if callable(startup):
             asyncio.run(startup())
         return self
 
-    def __exit__(self, *exc_info: Any) -> None:
+    def __exit__(self, *exc_info: object) -> None:
         shutdown = getattr(self.app, "shutdown", None)
         if callable(shutdown):
             asyncio.run(shutdown())

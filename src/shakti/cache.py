@@ -27,7 +27,8 @@ import functools
 import hashlib
 import json
 import time
-from typing import TYPE_CHECKING, Any, Callable
+from collections.abc import Callable
+from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
     from shakti.application import Shakti
@@ -48,7 +49,7 @@ class Cache:
         self._redis: Any = None
         self._store: dict[str, tuple[Any, float]] = {}  # key → (value, expires_at)
 
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         app.container.register_instance(Cache, self)
         if self._redis_url:
             @app.on_startup

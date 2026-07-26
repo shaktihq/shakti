@@ -8,14 +8,14 @@ from collections.abc import Callable, Sequence
 from typing import Any
 
 from shakti.config.settings import Config
-from shakti.di import Container, call_with_injection, _maybe_await
+from shakti.di import Container, _maybe_await, call_with_injection
 from shakti.exceptions import HTTPException
 from shakti.http.request import Request
 from shakti.http.response import JSONResponse, PlainTextResponse, Response
 from shakti.middleware.base import BaseHTTPMiddleware, build_middleware_chain
 from shakti.routing.router import Endpoint, Router
-from shakti.websocket import WebSocket, WebSocketDisconnect
 from shakti.types import Receive, Scope, Send
+from shakti.websocket import WebSocket, WebSocketDisconnect
 
 logger = logging.getLogger("shakti.app")
 
@@ -298,7 +298,6 @@ class Shakti:
 
     async def _handle_websocket(self, scope: Scope, receive: Receive, send: Send) -> None:
         """Handle a WebSocket connection."""
-        from shakti.websocket import WebSocket, WebSocketDisconnect
         ws = WebSocket(scope, receive, send)
         scope["app"] = self
         result = self.router.find_websocket(ws.path)
@@ -313,7 +312,7 @@ class Shakti:
             await endpoint(ws)
         except WebSocketDisconnect:
             pass
-        except Exception as exc:
+        except Exception:
             logger.exception("WebSocket error on %s", ws.path)
             try:
                 await ws.close(code=1011)

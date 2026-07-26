@@ -40,7 +40,6 @@ from shakti.ai.providers.base import AIResponse, BaseProvider, Message
 from shakti.ai.rag import RAGStore
 from shakti.ai.templates import PromptTemplate
 from shakti.exceptions import HTTPException
-from shakti.http.request import Request
 from shakti.http.response import Response
 from shakti.routing.router import Router
 
@@ -71,7 +70,7 @@ class SSEResponse(Response):
         })
         try:
             async for chunk in self._generator:
-                data = f"data: {json.dumps({'chunk': chunk})}\n\n".encode("utf-8")
+                data = f"data: {json.dumps({'chunk': chunk})}\n\n".encode()
                 await send({"type": "http.response.body", "body": data, "more_body": True})
         finally:
             await send({"type": "http.response.body", "body": b"data: [DONE]\n\n", "more_body": False})
@@ -106,7 +105,7 @@ class AI:
 
     def __init__(
         self,
-        config: "Config | None" = None,
+        config: Config | None = None,
         *,
         provider: str = "anthropic",
         api_key: str = "",
@@ -142,7 +141,7 @@ class AI:
     # ------------------------------------------------------------------
     # App integration
     # ------------------------------------------------------------------
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         app.container.register_instance(AI, self)
         app.include_router(self._build_router(), prefix=self.prefix)
 

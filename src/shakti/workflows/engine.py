@@ -74,7 +74,7 @@ class WorkflowEngine:
     # ------------------------------------------------------------------
     # App integration
     # ------------------------------------------------------------------
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         app.container.register_instance(WorkflowEngine, self)
         app.include_router(self._build_router(), prefix=self.prefix)
 

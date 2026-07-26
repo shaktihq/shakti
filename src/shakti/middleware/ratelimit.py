@@ -5,7 +5,6 @@ from __future__ import annotations
 import time
 from collections import defaultdict
 from collections.abc import Callable
-from typing import Any
 
 from shakti.http.request import Request
 from shakti.http.response import JSONResponse, Response

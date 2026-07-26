@@ -69,7 +69,7 @@ class Auth:
     # ------------------------------------------------------------------
     # App integration
     # ------------------------------------------------------------------
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         """Register auth routes and inject Auth into the DI container."""
         app.container.register_instance(Auth, self)
         app.include_router(self._build_router(), prefix=self.prefix)
@@ -156,7 +156,7 @@ class Auth:
                 raise HTTPException(401, "Missing X-API-Key header")
             async with _auth.db.session() as session:
                 result = await session.execute(
-                    select(APIKey).where(APIKey.is_active == True)  # noqa: E712
+                    select(APIKey).where(APIKey.is_active == True)
                 )
                 for api_key in result.scalars():
                     if verify_password(raw_key, api_key.key_hash):

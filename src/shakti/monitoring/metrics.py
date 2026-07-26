@@ -5,7 +5,7 @@ from __future__ import annotations
 import time
 from collections import defaultdict, deque
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import Any
 
 
@@ -15,7 +15,7 @@ class RequestRecord:
     path: str
     status_code: int
     duration_ms: float
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
 
 class MetricsCollector:
@@ -23,7 +23,7 @@ class MetricsCollector:
 
     def __init__(self, max_requests: int = 1000) -> None:
         self._start_time = time.monotonic()
-        self._started_at = datetime.now(timezone.utc)
+        self._started_at = datetime.now(UTC)
         self._requests: deque[RequestRecord] = deque(maxlen=max_requests)
         self._total = 0
         self._errors = 0

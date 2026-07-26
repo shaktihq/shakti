@@ -16,17 +16,15 @@ Usage::
 
 from __future__ import annotations
 
-from typing import Any, Generic, TypeVar
+from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from shakti.orm.base import Base
 
-ModelT = TypeVar("ModelT", bound=Base)
 
-
-class Repository(Generic[ModelT]):
+class Repository[ModelT: Base]:
     def __init__(self, model: type[ModelT], session: AsyncSession) -> None:
         self.model = model
         self.session = session

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import jwt
@@ -20,8 +20,8 @@ def create_access_token(
     data = {
         **payload,
         "type": "access",
-        "iat": datetime.now(timezone.utc),
-        "exp": datetime.now(timezone.utc) + timedelta(minutes=expire_minutes),
+        "iat": datetime.now(UTC),
+        "exp": datetime.now(UTC) + timedelta(minutes=expire_minutes),
     }
     return jwt.encode(data, secret, algorithm=algorithm)
 
@@ -36,8 +36,8 @@ def create_refresh_token(
     data = {
         **payload,
         "type": "refresh",
-        "iat": datetime.now(timezone.utc),
-        "exp": datetime.now(timezone.utc) + timedelta(days=expire_days),
+        "iat": datetime.now(UTC),
+        "exp": datetime.now(UTC) + timedelta(days=expire_days),
     }
     return jwt.encode(data, secret, algorithm=algorithm)
 

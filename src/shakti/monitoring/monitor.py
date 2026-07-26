@@ -24,11 +24,10 @@ import time
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
-from shakti.exceptions import HTTPException
 from shakti.http.request import Request
 from shakti.http.response import HTMLResponse, JSONResponse, Response
 from shakti.middleware.base import BaseHTTPMiddleware
-from shakti.monitoring.health import CheckResult, HealthChecker, HealthStatus
+from shakti.monitoring.health import HealthChecker, HealthStatus
 from shakti.monitoring.metrics import MetricsCollector
 from shakti.routing.router import Router
 
@@ -104,7 +103,7 @@ class Monitor:
     # ------------------------------------------------------------------
     # App integration
     # ------------------------------------------------------------------
-    def init_app(self, app: "Shakti") -> None:
+    def init_app(self, app: Shakti) -> None:
         app.container.register_instance(Monitor, self)
         app.add_middleware(self._middleware)
 

@@ -17,13 +17,11 @@ Usage::
 from __future__ import annotations
 
 import inspect
-import json
-from collections.abc import Callable, Awaitable
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from typing import Any, get_type_hints
 
-from shakti.ai.providers.base import AIResponse, Message
-
+from shakti.ai.providers.base import Message
 
 _PY_TO_JSON_TYPE = {
     "str": "string",

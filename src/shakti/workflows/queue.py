@@ -7,8 +7,9 @@ import logging
 import traceback
 import uuid
 from collections import deque
-from datetime import datetime, timezone
-from typing import Any, Callable
+from collections.abc import Callable
+from datetime import UTC, datetime
+from typing import Any
 
 from shakti.workflows.models import Job, JobStatus
 
@@ -60,7 +61,7 @@ class JobQueue:
             func=func,
             kwargs=kwargs,
             max_retries=max_retries,
-            scheduled_at=datetime.now(timezone.utc) if delay_seconds == 0 else None,
+            scheduled_at=datetime.now(UTC) if delay_seconds == 0 else None,
         )
         self._jobs[job.id] = job
         self._history.appendleft(job.id)
@@ -75,7 +76,7 @@ class JobQueue:
 
     async def _delayed_enqueue(self, job: Job, delay: float) -> None:
         await asyncio.sleep(delay)
-        job.scheduled_at = datetime.now(timezone.utc)
+        job.scheduled_at = datetime.now(UTC)
         await self._queue.put(job)
 
     async def _worker(self, worker_id: int) -> None:
@@ -84,7 +85,7 @@ class JobQueue:
                 job = await asyncio.wait_for(self._queue.get(), timeout=1.0)
                 await self._run_job(job)
                 self._queue.task_done()
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 continue
             except asyncio.CancelledError:
                 break
@@ -96,7 +97,7 @@ class JobQueue:
             return
 
         job.status = JobStatus.RUNNING
-        job.started_at = datetime.now(timezone.utc)
+        job.started_at = datetime.now(UTC)
         logger.info("Running job %s (%s)", job.id[:8], job.name)
 
         try:
@@ -105,7 +106,7 @@ class JobQueue:
                 result = await result
             job.result = result
             job.status = JobStatus.COMPLETED
-            job.finished_at = datetime.now(timezone.utc)
+            job.finished_at = datetime.now(UTC)
             logger.info("Job %s completed in %dms", job.id[:8],
                        int((job.finished_at - job.started_at).total_seconds() * 1000))
         except Exception as e:
@@ -120,7 +121,7 @@ class JobQueue:
                 asyncio.create_task(self._delayed_enqueue(job, delay))
             else:
                 job.status = JobStatus.FAILED
-                job.finished_at = datetime.now(timezone.utc)
+                job.finished_at = datetime.now(UTC)
                 logger.error("Job %s failed permanently: %s\n%s",
                              job.id[:8], e, traceback.format_exc())
 

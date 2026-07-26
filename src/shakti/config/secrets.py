@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import Any
-
 
 class Secret:
     __slots__ = ("_value",)
@@ -23,7 +21,7 @@ class Secret:
     def __bool__(self) -> bool:
         return bool(self._value)
 
-    def __eq__(self, other: Any) -> bool:
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, Secret):
             return self._value == other._value
         if isinstance(other, str):

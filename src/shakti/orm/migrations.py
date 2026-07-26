@@ -6,12 +6,9 @@ alembic.ini or env.py directly.
 
 from __future__ import annotations
 
-import asyncio
-import importlib
 import logging
 import sys
 from pathlib import Path
-from typing import Any
 
 logger = logging.getLogger("shakti.migrations")
 

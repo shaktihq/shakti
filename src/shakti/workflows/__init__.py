@@ -9,7 +9,7 @@ __all__ = [
     "Job",
     "JobQueue",
     "JobStatus",
-    "Scheduler",
     "ScheduledJob",
+    "Scheduler",
     "WorkflowEngine",
 ]

@@ -4,8 +4,9 @@ from __future__ import annotations
 
 import asyncio
 import logging
-from datetime import datetime, timezone
-from typing import Any, Callable
+from collections.abc import Callable
+from datetime import UTC, datetime
+from typing import Any
 
 from shakti.workflows.models import ScheduledJob
 
@@ -69,7 +70,7 @@ class Scheduler:
                 result = job.func(**job.kwargs)
                 if asyncio.iscoroutine(result):
                     await result
-                job.last_run = datetime.now(timezone.utc)
+                job.last_run = datetime.now(UTC)
                 job.run_count += 1
                 logger.info("Scheduled job %s ran (total: %d)", job.name, job.run_count)
             except asyncio.CancelledError:
