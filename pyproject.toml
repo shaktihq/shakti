@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "shakti-framework"
-version = "0.2.0"
+version = "0.2.1"
 description = "Shakti — AI-first, async Python web framework. Born in India, built for the world."
 readme = "README.md"
 license = { text = "MIT" }
@@ -52,10 +52,9 @@ dev = [
 shakti = "shakti.cli.main:main"
 
 [project.urls]
-Homepage      = "https://github.com/shaktihq/shakti"
-Documentation = "https://github.com/shaktihq/shakti/tree/main/docs"
+Homepage      = "https://shakti.adityabhat.in"
+Documentation = "https://shakti.adityabhat.in"
 Repository    = "https://github.com/shaktihq/shakti"
-"Bug Tracker" = "https://github.com/shaktihq/shakti/issues"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/shakti"]

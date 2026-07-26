@@ -1,5 +1,11 @@
 # Shakti
 
+
+[![Docs](https://img.shields.io/badge/docs-shakti.adityabhat.in-purple)](https://shakti.adityabhat.in)
+[![PyPI](https://img.shields.io/pypi/v/shakti-framework)](https://pypi.org/project/shakti-framework/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![Tests](https://github.com/shaktihq/shakti/actions/workflows/tests.yml/badge.svg)](https://github.com/shaktihq/shakti/actions)
+
 📖 **Docs:** https://shakti.adityabhat.in
 
 **An AI-first, async Python web framework.**

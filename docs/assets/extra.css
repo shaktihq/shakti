@@ -1,0 +1,168 @@
+/* Hero section */
+.hero {
+  padding: 4rem 0;
+  text-align: center;
+}
+
+.hero h1 {
+  font-size: 3.5rem !important;
+  font-weight: 800 !important;
+  background: linear-gradient(135deg, #7c3aed, #4f46e5, #06b6d4);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  margin-bottom: 1rem !important;
+}
+
+.hero-subtitle {
+  font-size: 1.3rem;
+  color: var(--md-default-fg-color--light);
+  margin-bottom: 2rem;
+}
+
+.hero-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #7c3aed20, #4f46e520);
+  border: 1px solid #7c3aed40;
+  color: #a78bfa;
+  padding: 0.3rem 1rem;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+/* Install command box */
+.install-box {
+  background: var(--md-code-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 12px;
+  padding: 1.2rem 2rem;
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 1rem;
+  margin: 1rem 0 2rem;
+  cursor: pointer;
+}
+
+/* Feature grid */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 3rem 0;
+}
+
+.feature-card {
+  background: var(--md-code-bg-color);
+  border: 1px solid var(--md-default-fg-color--lightest);
+  border-radius: 12px;
+  padding: 1.5rem;
+  transition: border-color 0.2s, transform 0.2s;
+}
+
+.feature-card:hover {
+  border-color: #7c3aed;
+  transform: translateY(-2px);
+}
+
+.feature-card h3 {
+  font-size: 1rem !important;
+  margin: 0.5rem 0 !important;
+  color: var(--md-default-fg-color) !important;
+}
+
+.feature-card p {
+  font-size: 0.875rem;
+  color: var(--md-default-fg-color--light);
+  margin: 0;
+}
+
+.feature-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Stats bar */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  padding: 2rem 0;
+  margin: 2rem 0;
+  border-top: 1px solid var(--md-default-fg-color--lightest);
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #7c3aed;
+}
+
+.stat-label {
+  font-size: 0.8rem;
+  color: var(--md-default-fg-color--light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* CTA buttons */
+.cta-buttons {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 2rem 0;
+}
+
+.cta-primary {
+  background: #7c3aed;
+  color: white !important;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none !important;
+  transition: background 0.2s;
+}
+
+.cta-primary:hover {
+  background: #6d28d9;
+}
+
+.cta-secondary {
+  background: transparent;
+  color: var(--md-default-fg-color) !important;
+  padding: 0.8rem 2rem;
+  border-radius: 8px;
+  font-weight: 600;
+  text-decoration: none !important;
+  border: 1px solid var(--md-default-fg-color--lightest);
+  transition: border-color 0.2s;
+}
+
+.cta-secondary:hover {
+  border-color: #7c3aed;
+}
+
+/* India badge */
+.india-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: linear-gradient(135deg, #FF9933, #FFFFFF, #138808);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+/* Hide default h1 on home */
+.md-typeset h1:first-child {
+  display: none;
+}

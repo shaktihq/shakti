@@ -1,42 +1,146 @@
-# Shakti
+---
+hide:
+  - navigation
+  - toc
+---
 
-**An AI-first, async Python web framework.**
+<div class="hero">
 
-> Flask simplicity · FastAPI performance · Django batteries · Built-in AI
+<div class="hero-badge">🇮🇳 Born in India · Built for the world</div>
 
-```bash
-pip install "shakti-framework[all]"
-shakti new myapp && cd myapp && shakti run --reload
-```
+<h1>Shakti Framework</h1>
+
+<p class="hero-subtitle">
+  The AI-first, async Python web framework.<br>
+  Everything you need. One install. Zero config.
+</p>
+
+<div class="cta-buttons">
+  <a href="getting-started/installation/" class="cta-primary">Get Started →</a>
+  <a href="https://github.com/shaktihq/shakti" class="cta-secondary">⭐ Star on GitHub</a>
+</div>
+
+<div class="install-box">
+  pip install "shakti-framework[all]"
+</div>
+
+</div>
 
 ---
 
-## Why Shakti?
-
-| | Django | FastAPI | **Shakti** |
-|---|---|---|---|
-| Async-first | ❌ | ✅ | ✅ |
-| Built-in ORM | ✅ | ❌ | ✅ |
-| Admin panel | ✅ | ❌ | ✅ |
-| JWT Auth | ❌ | ❌ | ✅ |
-| **Built-in AI** | ❌ | ❌ | ✅ |
-| WebSockets | ❌ | ✅ | ✅ |
-| Background jobs | ❌ | ❌ | ✅ |
-| Monitoring | ❌ | ❌ | ✅ |
+<div class="stats-bar">
+  <div class="stat-item">
+    <div class="stat-number">211</div>
+    <div class="stat-label">Tests Passing</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">13</div>
+    <div class="stat-label">Modules</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">0.2.0</div>
+    <div class="stat-label">Latest Version</div>
+  </div>
+  <div class="stat-item">
+    <div class="stat-number">MIT</div>
+    <div class="stat-label">License</div>
+  </div>
+</div>
 
 ---
 
-## 60-second demo
+## Everything Included
+
+<div class="feature-grid">
+
+<div class="feature-card">
+<div class="feature-icon">⚡</div>
+<h3>Async First</h3>
+<p>Built on ASGI from day one. Handles thousands of concurrent requests with full async/await support.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🤖</div>
+<h3>Built-in AI</h3>
+<p>Claude and OpenAI support out of the box. Chat, streaming, RAG, and agents — 3 lines of code.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🗄️</div>
+<h3>Async ORM</h3>
+<p>SQLAlchemy async with auto migrations, repository pattern, and one-command CRUD generation.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🔐</div>
+<h3>Auth Built-in</h3>
+<p>JWT tokens, refresh tokens, RBAC, API keys, and password hashing — all ready to use.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🖥️</div>
+<h3>Admin Panel</h3>
+<p>Auto-generated dark/light mode admin UI for any model. No extra setup needed.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🔌</div>
+<h3>WebSockets</h3>
+<p>Real-time connections with JSON messaging, path parameters, and AI streaming support.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">📄</div>
+<h3>Document AI</h3>
+<p>PDF extraction, image OCR via Claude Vision, document Q&A, and structured data extraction.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">⚙️</div>
+<h3>Background Jobs</h3>
+<p>Async job queue with automatic retry, exponential backoff, and interval scheduling.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">📊</div>
+<h3>Monitoring</h3>
+<p>Live dashboard, health checks, request metrics, CPU/memory usage — zero configuration.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">🛡️</div>
+<h3>Rate Limiting</h3>
+<p>Per-IP rate limiting middleware with automatic 429 responses and Retry-After headers.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">📧</div>
+<h3>Email</h3>
+<p>Send emails in 2 lines. SMTP with TLS/SSL, HTML support, CC, BCC — async and non-blocking.</p>
+</div>
+
+<div class="feature-card">
+<div class="feature-icon">📖</div>
+<h3>OpenAPI / Swagger</h3>
+<p>Auto-generated API documentation at /docs and /redoc — no extra code needed.</p>
+</div>
+
+</div>
+
+---
+
+## 60 Seconds to a Full AI App
 
 ```python
 from shakti import Shakti, Depends
 from shakti.config import Config
-from shakti.orm import Database, Repository
+from shakti.orm import Database
 from shakti.auth import Auth
 from shakti.auth.models import User
 from shakti.ai import AI
 from shakti.admin import Admin
 from shakti.monitoring import Monitor
+from shakti.workflows import WorkflowEngine
 from shakti.websocket import WebSocket
 
 config = Config()
@@ -51,16 +155,19 @@ auth.init_app(app)
 ai = AI(config)
 ai.init_app(app)
 
-admin = Admin(db, auth)
+admin = Admin(db, auth, title="My Admin")
 admin.register(User)
 admin.init_app(app)
 
 monitor = Monitor()
 monitor.init_app(app)
 
+workflows = WorkflowEngine()
+workflows.init_app(app)
+
 @app.get("/")
 async def index() -> dict:
-    return {"hello": "world"}
+    return {"framework": "Shakti", "status": "running"}
 
 @app.get("/me")
 async def me(user: User = Depends(auth.get_current_user())) -> dict:
@@ -74,36 +181,88 @@ async def chat(ws: WebSocket) -> None:
         await ws.send_json({"reply": reply})
 ```
 
-**That's it.** You now have:
+**You now have:**
 
-- ✅ REST API with typed routing
-- ✅ JWT authentication
-- ✅ AI chat endpoint (Claude/OpenAI)
-- ✅ WebSocket real-time chat
+- ✅ REST API with JWT auth
+- ✅ AI chat at `POST /ai/chat`
+- ✅ WebSocket AI streaming at `ws://localhost:8000/ws/chat`
 - ✅ Admin panel at `/admin/`
 - ✅ Monitoring dashboard at `/monitor/`
+- ✅ Background job queue
+- ✅ OpenAPI docs at `/docs`
+
+---
+
+## Auto CRUD Generation
+
+Generate a complete API in one command:
+
+```bash
+# Create model + full CRUD endpoints
+shakti generate api Post title:str body:text views:int
+
+# Run migrations
+shakti makemigrations "add posts"
+shakti migrate
+```
+
+You instantly get:
+
+| Method | Route | Description |
+|--------|-------|-------------|
+| `GET` | `/posts` | List all posts |
+| `POST` | `/posts` | Create a post |
+| `GET` | `/posts/{id}` | Get one post |
+| `PUT` | `/posts/{id}` | Update a post |
+| `DELETE` | `/posts/{id}` | Delete a post |
 
 ---
 
 ## Install
 
-```bash
-# Core only
-pip install shakti-framework
+=== "Everything"
 
-# With everything
+    ```bash
+    pip install "shakti-framework[all]"
+    ```
+
+=== "Pick modules"
+
+    ```bash
+    pip install "shakti-framework[server]"      # + uvicorn
+    pip install "shakti-framework[orm]"         # + SQLAlchemy
+    pip install "shakti-framework[auth]"        # + JWT + bcrypt
+    pip install "shakti-framework[ai]"          # + Claude/OpenAI
+    pip install "shakti-framework[monitoring]"  # + psutil
+    ```
+
+=== "Core only"
+
+    ```bash
+    pip install shakti-framework
+    ```
+
+---
+
+## Quick Start
+
+```bash
 pip install "shakti-framework[all]"
-
-# Pick what you need
-pip install "shakti-framework[server,orm,auth,ai]"
+shakti new myapp
+cd myapp
+shakti run --reload
 ```
 
-## CLI
+Open `http://127.0.0.1:8000` — your app is running. 🚀
 
-```bash
-shakti new myapp              # scaffold project
-shakti run --reload           # start dev server
-shakti generate api Post title:str body:text  # generate full CRUD
-shakti makemigrations "add posts"  # create migration
-shakti migrate                # apply migrations
-```
+<div class="cta-buttons" style="margin-top: 3rem;">
+  <a href="getting-started/installation/" class="cta-primary">Read the Docs →</a>
+  <a href="https://pypi.org/project/shakti-framework/" class="cta-secondary">📦 View on PyPI</a>
+</div>
+
+---
+
+<div style="text-align: center; padding: 2rem 0; color: var(--md-default-fg-color--light); font-size: 0.9rem;">
+  MIT License · Built by <a href="https://adityabhat.in">Aditya Bhat</a> · 
+  <span style="background: linear-gradient(to right, #FF9933, #138808); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700;">Made in India 🇮🇳</span>
+</div>

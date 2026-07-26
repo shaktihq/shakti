@@ -1,34 +1,64 @@
 site_name: Shakti
-site_description: An AI-first, async Python web framework
-site_url: https://aditya-bhat.github.io/shakti
-repo_url: https://github.com/aditya-bhat/shakti
-repo_name: aditya-bhat/shakti
-edit_uri: edit/main/docs/
+site_description: AI-first, async Python web framework. Born in India, built for the world.
+site_url: https://shakti.adityabhat.in
+repo_url: https://github.com/shaktihq/shakti
+repo_name: shaktihq/shakti
+edit_uri: ""
 
 theme:
   name: material
+  logo: assets/logo.png
+  favicon: assets/logo.png
   palette:
     - scheme: slate
-      primary: indigo
+      primary: deep purple
       accent: indigo
       toggle:
         icon: material/brightness-4
         name: Switch to light mode
     - scheme: default
-      primary: indigo
+      primary: deep purple
       accent: indigo
       toggle:
         icon: material/brightness-7
         name: Switch to dark mode
   features:
+    - navigation.instant
+    - navigation.tracking
     - navigation.tabs
+    - navigation.tabs.sticky
     - navigation.sections
+    - navigation.expand
     - navigation.top
+    - navigation.footer
     - search.suggest
+    - search.highlight
+    - search.share
     - content.code.copy
     - content.code.annotate
+    - content.tabs.link
+    - announce.dismiss
+  font:
+    text: Inter
+    code: JetBrains Mono
   icon:
     repo: fontawesome/brands/github
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/shaktihq/shakti
+      name: GitHub
+    - icon: fontawesome/brands/python
+      link: https://pypi.org/project/shakti-framework/
+      name: PyPI
+    - icon: fontawesome/brands/linkedin
+      link: https://linkedin.com/in/aditya-bhat-983b9623b
+      name: LinkedIn
+  generator: false
+
+extra_css:
+  - assets/extra.css
 
 nav:
   - Home: index.md
@@ -70,16 +100,24 @@ nav:
 markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
   - pymdownx.tabbed:
       alternate_style: true
-  - admonition
   - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - admonition
   - attr_list
   - md_in_html
   - tables
+  - toc:
+      permalink: true
 
 plugins:
-  - search
+  - search:
+      lang: en
