@@ -17,6 +17,6 @@ A clear description of what the bug is.
 What you expected to happen.
 
 **Environment**
-- ShadowForge version:
+- Shakti version:
 - Python version:
 - OS:

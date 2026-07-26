@@ -118,7 +118,7 @@ responses. Built-ins: `CORSMiddleware`, `RequestLoggingMiddleware`.
 
 ```python
 from shakti.config import Config
-config = Config()   # reads config/ + .env, profile from SHADOWFORGE_ENV
+config = Config()   # reads config/ + .env, profile from SHAKTI_ENV
 ```
 
 Priority: `os.environ` → `.env` → `settings.<profile>.yaml` →

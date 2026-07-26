@@ -1,13 +1,13 @@
-# Contributing to ShadowForge
+# Contributing to Shakti
 
-Thanks for your interest in ShadowForge. This document explains how to set up a
+Thanks for your interest in Shakti. This document explains how to set up a
 development environment, run the test suite, and how the project is organized.
 
 ## Development setup
 
 ```bash
-git clone https://github.com/shadowforge/shadowforge.git
-cd shadowforge
+git clone https://github.com/shaktihq/shakti.git
+cd shakti
 python -m venv .venv && source .venv/bin/activate
 pip install -e ".[dev]"
 ```
@@ -27,7 +27,7 @@ All pull requests must pass the full test suite. New features require tests.
 
 ```bash
 ruff check src tests
-mypy src/shadowforge
+mypy src/shakti
 ```
 
 - Keep modules small and focused. One responsibility per module (SOLID).
@@ -35,7 +35,7 @@ mypy src/shadowforge
 
 ## Project phases
 
-ShadowForge is developed in phases. Each phase ships complete and tested.
+Shakti is developed in phases. Each phase ships complete and tested.
 
 | Phase | Scope | Status |
 |-------|-------|--------|
@@ -55,4 +55,4 @@ ShadowForge is developed in phases. Each phase ships complete and tested.
 ## Reporting issues
 
 Open a GitHub issue with a minimal reproduction. Include Python version and
-the output of `shadowforge version`.
+the output of `shakti version`.

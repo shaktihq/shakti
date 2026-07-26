@@ -45,7 +45,7 @@ dmypy.json
 .DS_Store
 Thumbs.db
 
-# PyForge project files
+# Shakti project files
 *.db
 *.sqlite3
 .env
