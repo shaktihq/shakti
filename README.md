@@ -1,5 +1,7 @@
 # Shakti
 
+📖 **Docs:** https://shakti.adityabhat.in
+
 **An AI-first, async Python web framework.**
 
 > Born in India. Built for the world.
