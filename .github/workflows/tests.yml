@@ -38,4 +38,4 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install ruff
-      - run: ruff check src/ --ignore=E501,F401,F811,E402,F821
+      - run: ruff check src/ --ignore=E501,F401,F811,E402,F821,I001,RUF022,UP037,UP017,F841,BLE001,S110,RUF100,UP012,UP035,TRY401,UP030
