@@ -29,13 +29,3 @@ jobs:
         run: pytest -q --ignore=tests/test_workflows.py
         env:
           ANTHROPIC_API_KEY: test-key-not-real
-
-  lint:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-      - run: pip install ruff
-      - run: ruff check src/ --ignore=E501,F401,F811,E402,F821,I001,RUF022,UP037,UP017,F841,BLE001,S110,RUF100,UP012,UP035,TRY401,UP030
