@@ -3,8 +3,8 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [project]
-name = "shakti"
-version = "0.1.0"
+name = "shakti-framework"
+version = "0.2.0"
 description = "Shakti — AI-first, async Python web framework. Born in India, built for the world."
 readme = "README.md"
 license = { text = "MIT" }

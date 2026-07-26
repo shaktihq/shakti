@@ -111,6 +111,34 @@ class Request:
         except ValueError as exc:
             raise HTTPException(400, "Malformed JSON in request body") from exc
 
+    async def files(self) -> dict:
+        """Parse multipart/form-data uploads.
+
+        Returns a dict of field name → UploadFile or str.
+
+        Usage::
+
+            files = await request.files()
+            doc = files["document"]   # UploadFile
+            content = await doc.read()
+        """
+        from shakti.upload import parse_multipart
+        ct = self.content_type or ""
+        if "multipart/form-data" not in ct:
+            from shakti.exceptions import HTTPException
+            raise HTTPException(415, "Expected multipart/form-data content type")
+        boundary = ""
+        for part in ct.split(";"):
+            part = part.strip()
+            if part.startswith("boundary="):
+                boundary = part[len("boundary="):].strip().strip('"')
+                break
+        if not boundary:
+            from shakti.exceptions import HTTPException
+            raise HTTPException(400, "Missing boundary in multipart/form-data")
+        body = await self.body()
+        return parse_multipart(body, boundary)
+
     async def form(self) -> dict[str, str]:
         content_type = self.content_type
         if content_type == "application/x-www-form-urlencoded":

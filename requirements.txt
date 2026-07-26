@@ -1,29 +1,29 @@
 # Core
-pyyaml
+pyyaml>=6.0
 
 # Server
-uvicorn
+uvicorn>=0.30
 
 # ORM
-sqlalchemy[asyncio]
-alembic
-aiosqlite
+sqlalchemy[asyncio]>=2.0
+alembic>=1.13
+aiosqlite>=0.20
 
 # Auth
-PyJWT
-bcrypt
+PyJWT>=2.8
+bcrypt>=4.0
 
 # AI
-anthropic
-openai
+anthropic>=0.30
+openai>=1.0
 
 # Document AI
-pypdf
-pillow
+pypdf>=4.0
+pillow>=10.0
 
 # Monitoring
-psutil
+psutil>=5.9
 
 # Dev/Testing
-pytest
-pytest-asyncio
+pytest>=8.0
+pytest-asyncio>=0.23

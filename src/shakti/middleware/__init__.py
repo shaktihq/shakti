@@ -11,3 +11,5 @@ __all__ = [
     "RequestLoggingMiddleware",
     "build_middleware_chain",
 ]
+
+from shakti.middleware.ratelimit import RateLimitMiddleware
