@@ -1,0 +1,17 @@
+app:
+  name: Shakti Demo
+  debug: true
+
+database:
+  url: sqlite+aiosqlite:///./demo.db
+
+auth:
+  secret_key: demo-secret-key-change-in-production
+  access_token_expire_minutes: 60
+
+ai:
+  provider: anthropic
+  model: claude-sonnet-4-6
+  api_key: ${ANTHROPIC_API_KEY}
+  max_tokens: 500
+  system_prompt: "You are a helpful assistant built into the Shakti demo app. Be concise."

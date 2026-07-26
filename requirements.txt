@@ -1,0 +1,29 @@
+# Core
+pyyaml
+
+# Server
+uvicorn
+
+# ORM
+sqlalchemy[asyncio]
+alembic
+aiosqlite
+
+# Auth
+PyJWT
+bcrypt
+
+# AI
+anthropic
+openai
+
+# Document AI
+pypdf
+pillow
+
+# Monitoring
+psutil
+
+# Dev/Testing
+pytest
+pytest-asyncio

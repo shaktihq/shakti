@@ -1,0 +1,69 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "shakti"
+version = "0.1.0"
+description = "Shakti — AI-first, async Python web framework. Born in India, built for the world."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.12"
+authors = [
+    { name = "Aditya Bhat", email = "contact@adityabhat.in" }
+]
+maintainers = [
+    { name = "Aditya Bhat", email = "contact@adityabhat.in" }
+]
+keywords = ["asgi", "web", "framework", "async", "ai", "python", "rest", "api", "india"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Framework :: AsyncIO",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Internet :: WWW/HTTP :: HTTP Servers",
+    "Typing :: Typed",
+]
+dependencies = ["pyyaml>=6.0"]
+
+[project.optional-dependencies]
+server     = ["uvicorn>=0.30"]
+orm        = ["sqlalchemy[asyncio]>=2.0", "alembic>=1.13", "aiosqlite>=0.20"]
+auth       = ["PyJWT>=2.8", "bcrypt>=4.0"]
+ai         = ["anthropic>=0.30", "openai>=1.0"]
+docs-ai    = ["pypdf>=4.0", "pillow>=10.0"]
+monitoring = ["psutil>=5.9"]
+all        = [
+    "uvicorn>=0.30",
+    "sqlalchemy[asyncio]>=2.0", "alembic>=1.13", "aiosqlite>=0.20",
+    "PyJWT>=2.8", "bcrypt>=4.0",
+    "anthropic>=0.30", "openai>=1.0",
+    "pypdf>=4.0", "pillow>=10.0",
+    "psutil>=5.9",
+]
+dev = [
+    "pytest>=8.0", "pytest-asyncio>=0.23",
+    "uvicorn>=0.30", "aiosqlite>=0.20",
+    "ruff>=0.5",
+]
+
+[project.scripts]
+shakti = "shakti.cli.main:main"
+
+[project.urls]
+Homepage      = "https://github.com/shaktihq/shakti"
+Documentation = "https://github.com/shaktihq/shakti/tree/main/docs"
+Repository    = "https://github.com/shaktihq/shakti"
+"Bug Tracker" = "https://github.com/shaktihq/shakti/issues"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/shakti"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/", "tests/", "docs/", "examples/", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths  = ["tests"]
+pythonpath = ["src"]
+asyncio_mode = "auto"
