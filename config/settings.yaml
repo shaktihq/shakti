@@ -1,0 +1,42 @@
+# ── App ───────────────────────────────────────────────────────────
+app:
+  name: shakti-app
+  debug: true
+
+# ── Server ────────────────────────────────────────────────────────
+server:
+  host: 127.0.0.1
+  port: 8000
+
+# ── Database ──────────────────────────────────────────────────────
+database:
+  url: sqlite+aiosqlite:///./shakti.db
+
+# ── Auth ──────────────────────────────────────────────────────────
+auth:
+  secret_key: ${SECRET_KEY}
+  access_token_expire_minutes: 30
+  refresh_token_expire_days: 7
+
+# ── AI ────────────────────────────────────────────────────────────
+ai:
+  provider: anthropic
+  model: claude-sonnet-4-6
+  api_key: ${ANTHROPIC_API_KEY}
+  max_tokens: 1000
+  system_prompt: "You are a helpful assistant."
+
+# ── Email ─────────────────────────────────────────────────────────
+mail:
+  host: smtp.gmail.com
+  port: 587
+  username: your-email@gmail.com
+  password: ${MAIL_PASSWORD}
+  from: "My App <your-email@gmail.com>"
+  use_tls: true
+
+# ── Cache ─────────────────────────────────────────────────────────
+# Uncomment to use Redis:
+# cache:
+#   redis_url: ${REDIS_URL}
+#   default_ttl: 300
