@@ -20,6 +20,6 @@ jobs:
           TWINE_USERNAME: __token__
           TWINE_PASSWORD: ${{ secrets.PYPI_API_TOKEN }}
         run: |
-          pip install build twine
+          pip install build "twine>=7.0" "packaging>=24.2"
           python3 -m build
           python3 -m twine upload dist/*
