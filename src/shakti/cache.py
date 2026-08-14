@@ -27,6 +27,7 @@ import functools
 import hashlib
 import json
 import time
+from collections import OrderedDict
 from collections.abc import Callable
 from typing import TYPE_CHECKING, Any
 
@@ -35,7 +36,7 @@ if TYPE_CHECKING:
 
 
 class Cache:
-    """In-memory LRU-style cache. Drop-in Redis when available."""
+    """In-memory LRU cache with TTL expiry. Drop-in Redis when available."""
 
     def __init__(
         self,
@@ -47,7 +48,8 @@ class Cache:
         self.max_size    = max_size
         self._redis_url  = redis_url
         self._redis: Any = None
-        self._store: dict[str, tuple[Any, float]] = {}  # key → (value, expires_at)
+        # key → (value, expires_at); insertion order == LRU order, oldest first
+        self._store: OrderedDict[str, tuple[Any, float]] = OrderedDict()
 
     def init_app(self, app: Shakti) -> None:
         app.container.register_instance(Cache, self)
@@ -80,6 +82,7 @@ class Cache:
         if expires_at and time.monotonic() > expires_at:
             del self._store[key]
             return None
+        self._store.move_to_end(key)  # mark as most-recently-used
         return value
 
     async def set(self, key: str, value: Any, ttl: int | None = None) -> None:
@@ -87,11 +90,11 @@ class Cache:
         if self._redis:
             await self._redis.set(key, json.dumps(value, default=str), ex=ttl or None)
             return
-        if len(self._store) >= self.max_size:
-            # Evict oldest
-            oldest = min(self._store, key=lambda k: self._store[k][1])
-            del self._store[oldest]
         expires_at = time.monotonic() + ttl if ttl else 0
+        if key in self._store:
+            del self._store[key]
+        elif len(self._store) >= self.max_size:
+            self._store.popitem(last=False)  # evict least-recently-used
         self._store[key] = (value, expires_at)
 
     async def delete(self, key: str) -> None:

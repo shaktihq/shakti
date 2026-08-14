@@ -25,6 +25,7 @@ class JobQueue:
         self._jobs: dict[str, Job] = {}
         self._history: deque[str] = deque(maxlen=max_history)
         self._tasks: list[asyncio.Task] = []
+        self._delayed_tasks: set[asyncio.Task] = set()
         self._running = False
 
     async def start(self) -> None:
@@ -44,6 +45,10 @@ class JobQueue:
             task.cancel()
         await asyncio.gather(*self._tasks, return_exceptions=True)
         self._tasks.clear()
+        for task in list(self._delayed_tasks):
+            task.cancel()
+        await asyncio.gather(*self._delayed_tasks, return_exceptions=True)
+        self._delayed_tasks.clear()
         logger.info("JobQueue stopped")
 
     async def enqueue(
@@ -67,12 +72,18 @@ class JobQueue:
         self._history.appendleft(job.id)
 
         if delay_seconds > 0:
-            asyncio.create_task(self._delayed_enqueue(job, delay_seconds))
+            self._spawn_delayed_enqueue(job, delay_seconds)
         else:
             await self._queue.put(job)
 
         logger.debug("Enqueued job %s (%s)", job.id[:8], job.name)
         return job
+
+    def _spawn_delayed_enqueue(self, job: Job, delay: float) -> None:
+        """Schedule a delayed re-queue, tracked so ``stop()`` can cancel it."""
+        task = asyncio.create_task(self._delayed_enqueue(job, delay))
+        self._delayed_tasks.add(task)
+        task.add_done_callback(self._delayed_tasks.discard)
 
     async def _delayed_enqueue(self, job: Job, delay: float) -> None:
         await asyncio.sleep(delay)
@@ -118,7 +129,7 @@ class JobQueue:
                 job.status = JobStatus.RETRYING
                 logger.warning("Job %s failed (attempt %d/%d), retrying in %ds: %s",
                                job.id[:8], job.retries, job.max_retries, delay, e)
-                asyncio.create_task(self._delayed_enqueue(job, delay))
+                self._spawn_delayed_enqueue(job, delay)
             else:
                 job.status = JobStatus.FAILED
                 job.finished_at = datetime.now(UTC)
@@ -130,7 +141,7 @@ class JobQueue:
 
     def cancel(self, job_id: str) -> bool:
         job = self._jobs.get(job_id)
-        if job and job.status == JobStatus.PENDING:
+        if job and job.status in (JobStatus.PENDING, JobStatus.RETRYING):
             job.status = JobStatus.CANCELLED
             return True
         return False

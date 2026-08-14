@@ -136,6 +136,49 @@ def test_delayed_job():
     assert ran["at"] - start >= 0.4  # ran after delay
 
 
+def test_cancel_retrying_job():
+    wf = WorkflowEngine(workers=1)
+
+    async def _run():
+        await wf._queue.start()
+
+        async def always_fail() -> None:
+            raise RuntimeError("nope")
+
+        job = await wf.enqueue(always_fail, max_retries=5)
+        # Let it fail once and enter its backoff (2s) as RETRYING.
+        await asyncio.sleep(0.3)
+        assert job.status == JobStatus.RETRYING
+        cancelled = wf.cancel(job.id)
+        # Wait past the backoff window to confirm it doesn't run again.
+        await asyncio.sleep(2.5)
+        await wf._queue.stop()
+        return job, cancelled
+
+    job, cancelled = asyncio.run(_run())
+    assert cancelled is True
+    assert job.status == JobStatus.CANCELLED
+
+
+def test_stop_cancels_pending_retry_timers():
+    wf = WorkflowEngine(workers=1)
+
+    async def _run():
+        await wf._queue.start()
+
+        async def always_fail() -> None:
+            raise RuntimeError("nope")
+
+        await wf.enqueue(always_fail, max_retries=5)
+        await asyncio.sleep(0.3)  # let it fail once, schedule a 2s retry timer
+        assert len(wf._queue._delayed_tasks) == 1
+        await wf._queue.stop()
+        return wf._queue._delayed_tasks
+
+    remaining = asyncio.run(_run())
+    assert len(remaining) == 0
+
+
 def test_job_list_and_filter():
     wf = WorkflowEngine(workers=1)
 
