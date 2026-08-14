@@ -14,6 +14,7 @@
 
 ```bash
 pip install "shakti-framework[all]"
+pip install shakti-framework
 ```
 
 [![PyPI](https://img.shields.io/pypi/v/shakti-framework)](https://pypi.org/project/shakti-framework/)
