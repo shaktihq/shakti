@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "shakti-framework"
-version = "0.2.4"
+version = "0.2.5"
 description = "Shakti — AI-first, async Python web framework. Born in India, built for the world."
 readme = "README.md"
 license = { text = "MIT" }
