@@ -3,11 +3,25 @@
 from __future__ import annotations
 
 import csv
+import html
 import io
 from collections import deque
 from dataclasses import dataclass
 from datetime import UTC, datetime
 from typing import Any
+
+
+def esc(value: Any) -> str:
+    """HTML-escape a value for safe interpolation into admin UI templates.
+
+    The admin UI builds pages by string interpolation, not a templating
+    engine with autoescaping — anything sourced from the database or a
+    request (field values, search queries, flash messages, activity log
+    entries) must be passed through this before landing in HTML, or a
+    value any regular app user can set becomes stored/reflected XSS
+    against the admin's authenticated session.
+    """
+    return html.escape(str(value), quote=True)
 
 
 def fmt(value: Any) -> str:

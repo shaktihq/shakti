@@ -212,6 +212,7 @@ def login_page(error="", title="Shakti Admin"):
 
 
 def dashboard(stats, activity, models_slugs, title, prefix="/admin"):
+    from shakti.admin.helpers import esc
     colors = [
         ("text-indigo-500 dark:text-indigo-400", "bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800"),
         ("text-violet-500 dark:text-violet-400", "bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800"),
@@ -260,15 +261,15 @@ def dashboard(stats, activity, models_slugs, title, prefix="/admin"):
           <td class="px-5 py-3">
             <div class="flex items-center gap-2">
               <span class="flex items-center justify-center rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-600 dark:text-brand-400 text-xs font-bold shrink-0"
-                    style="width:26px;height:26px;">{initial}</span>
-              <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">{a.username}</span>
+                    style="width:26px;height:26px;">{esc(initial)}</span>
+              <span class="text-sm text-gray-700 dark:text-gray-300 font-medium">{esc(a.username)}</span>
             </div>
           </td>
           <td class="px-5 py-3">
-            <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold {badge}">{a.action.title()}</span>
+            <span class="inline-block px-2 py-0.5 rounded-md text-xs font-semibold {badge}">{esc(a.action.title())}</span>
           </td>
-          <td class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{a.model}</td>
-          <td class="px-5 py-3 text-xs text-gray-400 dark:text-gray-600 font-mono">{detail}</td>
+          <td class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{esc(a.model)}</td>
+          <td class="px-5 py-3 text-xs text-gray-400 dark:text-gray-600 font-mono">{esc(detail)}</td>
         </tr>"""
 
     if not act_rows:
@@ -312,7 +313,7 @@ def dashboard(stats, activity, models_slugs, title, prefix="/admin"):
 
 
 def model_list(model_admin, rows, total, page, per_page, search, models_slugs, flash="", admin_title="Shakti Admin", prefix="/admin"):
-    from shakti.admin.helpers import fmt
+    from shakti.admin.helpers import esc, fmt
 
     th_cls = "px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 whitespace-nowrap"
     headers_html = "".join(f'<th class="{th_cls}">{f.replace("_"," ").title()}</th>' for f in model_admin.list_fields)
@@ -329,11 +330,11 @@ def model_list(model_admin, rows, total, page, per_page, search, models_slugs, f
                     badge = '<span class="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-gray-100 dark:bg-gray-800 text-gray-500 dark:text-gray-400">No</span>'
                 cells += f'<td class="px-4 py-3">{badge}</td>'
             elif i == 0:
-                cells += f'<td class="px-4 py-3 text-sm font-mono text-gray-400 dark:text-gray-500">{fmt(val)}</td>'
+                cells += f'<td class="px-4 py-3 text-sm font-mono text-gray-400 dark:text-gray-500">{esc(fmt(val))}</td>'
             elif i == 1:
-                cells += f'<td class="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white">{fmt(val)}</td>'
+                cells += f'<td class="px-4 py-3 text-sm font-semibold text-gray-900 dark:text-white">{esc(fmt(val))}</td>'
             else:
-                cells += f'<td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{fmt(val)}</td>'
+                cells += f'<td class="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">{esc(fmt(val))}</td>'
 
         rows_html += f"""
         <tr class="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors group">
@@ -356,19 +357,19 @@ def model_list(model_admin, rows, total, page, per_page, search, models_slugs, f
         </tr>"""
 
     if not rows_html:
-        rows_html = f'<tr><td colspan="{len(model_admin.list_fields)+1}" class="py-16 text-center text-sm text-gray-400 dark:text-gray-600">{"No results for &quot;" + search + "&quot;" if search else "No records yet"}</td></tr>'
+        rows_html = f'<tr><td colspan="{len(model_admin.list_fields)+1}" class="py-16 text-center text-sm text-gray-400 dark:text-gray-600">{"No results for &quot;" + esc(search) + "&quot;" if search else "No records yet"}</td></tr>'
 
     total_pages = max(1, (total + per_page - 1) // per_page)
     page_start = (page - 1) * per_page + 1 if total > 0 else 0
     page_end = min(page * per_page, total)
 
     btn_cls = "px-3 py-1.5 text-xs font-medium rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
-    prev_btn = f'<a href="?page={page-1}&search={search}" class="{btn_cls}">&#8592; Prev</a>' if page > 1 else ""
-    next_btn = f'<a href="?page={page+1}&search={search}" class="{btn_cls}">Next &#8594;</a>' if page < total_pages else ""
+    prev_btn = f'<a href="?page={page-1}&search={esc(search)}" class="{btn_cls}">&#8592; Prev</a>' if page > 1 else ""
+    next_btn = f'<a href="?page={page+1}&search={esc(search)}" class="{btn_cls}">Next &#8594;</a>' if page < total_pages else ""
 
     flash_html = f"""
     <div x-data="{{show:true}}" x-show="show" x-init="setTimeout(()=>show=false,4000)" class="flex items-center gap-3 px-4 py-3 mb-5 rounded-xl border border-emerald-200 dark:border-emerald-800 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-700 dark:text-emerald-400 text-sm">
-      {ICONS['check']}<span>{flash.replace('+', ' ')}</span>
+      {ICONS['check']}<span>{esc(flash.replace('+', ' '))}</span>
       <button @click="show=false" class="ml-auto text-emerald-500 hover:text-emerald-700">{ICONS['x']}</button>
     </div>""" if flash else ""
 
@@ -395,7 +396,7 @@ def model_list(model_admin, rows, total, page, per_page, search, models_slugs, f
     <div class="mb-4">
       <form method="GET" style="position:relative;display:inline-block;width:320px;max-width:100%;">
         <span style="position:absolute;left:12px;top:50%;transform:translateY(-50%);" class="text-gray-400 dark:text-gray-500 pointer-events-none">{ICONS['search']}</span>
-        <input name="search" value="{search}"
+        <input name="search" value="{esc(search)}"
                placeholder="Search {', '.join(model_admin.search_fields) if model_admin.search_fields else model_admin.name}…"
                class="w-full pl-10 pr-4 py-2.5 text-sm rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-600 focus:outline-none focus:ring-2 focus:ring-brand-500 transition-colors shadow-sm">
       </form>
@@ -426,6 +427,8 @@ def model_list(model_admin, rows, total, page, per_page, search, models_slugs, f
 
 
 def model_form(model_admin, obj, models_slugs, errors=None, admin_title="Shakti Admin", prefix="/admin"):
+    from shakti.admin.helpers import esc
+
     is_edit = obj is not None
     action = f"{prefix}/{model_admin.slug}/{obj.id}" if is_edit else f"{prefix}/{model_admin.slug}/new"
     title = f"Edit {model_admin.name}" if is_edit else f"New {model_admin.name}"
@@ -450,7 +453,7 @@ def model_form(model_admin, obj, models_slugs, errors=None, admin_title="Shakti 
             badge = ""
 
         if f["type"] == "textarea":
-            inp = f'<textarea name="{f["name"]}" rows="4" {da} class="{cls}" style="resize:vertical;">{val}</textarea>'
+            inp = f'<textarea name="{f["name"]}" rows="4" {da} class="{cls}" style="resize:vertical;">{esc(val)}</textarea>'
         elif f["type"] == "checkbox":
             chk = "checked" if val else ""
             inp = f"""<label class="flex items-center gap-3 cursor-pointer">
@@ -460,12 +463,12 @@ def model_form(model_admin, obj, models_slugs, errors=None, admin_title="Shakti 
             </label>"""
         elif f["type"] in ("number", "decimal"):
             step = ' step="0.01"' if f["type"] == "decimal" else ""
-            inp = f'<input type="number"{step} name="{f["name"]}" value="{val}" {da} class="{cls}">'
+            inp = f'<input type="number"{step} name="{f["name"]}" value="{esc(val)}" {da} class="{cls}">'
         elif f["type"] == "datetime":
             dt_val = val.strftime("%Y-%m-%dT%H:%M") if hasattr(val, "strftime") else ""
-            inp = f'<input type="datetime-local" name="{f["name"]}" value="{dt_val}" {da} class="{cls}">'
+            inp = f'<input type="datetime-local" name="{f["name"]}" value="{esc(dt_val)}" {da} class="{cls}">'
         else:
-            inp = f'<input type="text" name="{f["name"]}" value="{val}" {da} class="{cls}">'
+            inp = f'<input type="text" name="{f["name"]}" value="{esc(val)}" {da} class="{cls}">'
 
         lbl = f["name"].replace("_", " ").title()
         fields_html += f"""
@@ -478,7 +481,7 @@ def model_form(model_admin, obj, models_slugs, errors=None, admin_title="Shakti 
 
     err_html = ""
     if errors:
-        items = "".join(f'<li class="flex items-center gap-2">{ICONS["x"]}{e}</li>' for e in errors)
+        items = "".join(f'<li class="flex items-center gap-2">{ICONS["x"]}{esc(e)}</li>' for e in errors)
         err_html = f'<ul class="p-4 rounded-xl bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-400 text-sm space-y-1">{items}</ul>'
 
     delete_btn = ""

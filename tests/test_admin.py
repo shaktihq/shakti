@@ -3,6 +3,8 @@
 from __future__ import annotations
 
 import asyncio
+from datetime import UTC, datetime
+
 import pytest
 import pytest_asyncio
 
@@ -230,3 +232,103 @@ def test_non_admin_cannot_login(client, auth):
     })
     assert r.status_code == 200
     assert b"Admin access required" in r.content
+
+
+# ---------------------------------------------------------------------------
+# XSS regression tests
+#
+# The admin UI builds HTML by string interpolation (no autoescaping template
+# engine), so anything sourced from the database or a request must be
+# HTML-escaped or a regular (non-admin) app user can plant script that runs
+# in the admin's authenticated browser session. See shakti/admin/helpers.py
+# `esc()` and its call sites in shakti/admin/ui.py.
+# ---------------------------------------------------------------------------
+
+_XSS_PAYLOAD = "<script>alert(1)</script>"
+
+
+_xss_user_counter = {"n": 0}
+
+
+def _xss_user(auth):
+    _xss_user_counter["n"] += 1
+    n = _xss_user_counter["n"]
+    email = f"xss{n}@test.dev"
+    # username must be unique per user but must still *contain* the raw
+    # payload so the escaping assertions have something to find.
+    username = f"{_XSS_PAYLOAD}{n}"
+
+    async def _create():
+        return await auth.register_user(
+            email=email,
+            username=username,
+            password="pass",
+            role="user",
+        )
+    return asyncio.run(_create())
+
+
+def test_model_list_escapes_stored_field_values(client, admin_user, auth):
+    xss_user = _xss_user(auth)
+    token = _get_token(client, admin_user)
+    r = client.get("/admin/users", headers={"cookie": f"shakti_admin={token}"})
+    assert r.status_code == 200
+    assert _XSS_PAYLOAD.encode() not in r.content
+    assert b"&lt;script&gt;alert(1)&lt;/script&gt;" in r.content
+
+
+def test_model_edit_form_escapes_stored_field_values(client, admin_user, auth):
+    xss_user = _xss_user(auth)
+    token = _get_token(client, admin_user)
+    r = client.get(f"/admin/users/{xss_user.id}", headers={"cookie": f"shakti_admin={token}"})
+    assert r.status_code == 200
+    assert _XSS_PAYLOAD.encode() not in r.content
+    assert b"&lt;script&gt;alert(1)&lt;/script&gt;" in r.content
+
+
+def test_model_list_search_is_reflected_safely(client, admin_user):
+    token = _get_token(client, admin_user)
+    r = client.get(
+        "/admin/users",
+        query={"search": _XSS_PAYLOAD},
+        headers={"cookie": f"shakti_admin={token}"},
+    )
+    assert r.status_code == 200
+    assert _XSS_PAYLOAD.encode() not in r.content
+    assert b"&lt;script&gt;alert(1)&lt;/script&gt;" in r.content
+
+
+def test_flash_message_is_reflected_safely(client, admin_user):
+    token = _get_token(client, admin_user)
+    r = client.get(
+        "/admin/users",
+        query={"flash": _XSS_PAYLOAD},
+        headers={"cookie": f"shakti_admin={token}"},
+    )
+    assert r.status_code == 200
+    assert _XSS_PAYLOAD.encode() not in r.content
+    assert b"&lt;script&gt;alert(1)&lt;/script&gt;" in r.content
+
+
+def test_dashboard_activity_log_escapes_field_values():
+    """The activity log's `username`/`detail` columns must not render a
+    malicious username or edit-detail unescaped on the dashboard.
+
+    Exercises shakti.admin.ui.dashboard() directly (rather than through a
+    live edit) since it only needs to prove the template escapes activity
+    log data — not exercise the full HTTP/DB round trip.
+    """
+    from shakti.admin.helpers import ActivityEntry
+    from shakti.admin.ui import dashboard as render_dashboard
+
+    entry = ActivityEntry(
+        timestamp=datetime.now(UTC),
+        username=_XSS_PAYLOAD,
+        action="updated",
+        model="User",
+        record_id=1,
+        detail=f"{{'username': '{_XSS_PAYLOAD}'}}",
+    )
+    html = render_dashboard(stats=[], activity=[entry], models_slugs=[], title="Test Admin")
+    assert _XSS_PAYLOAD not in html
+    assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html
