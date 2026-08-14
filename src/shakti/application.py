@@ -130,6 +130,36 @@ class Shakti:
     def include_router(self, router: Router, *, prefix: str = "") -> None:
         self.router.include_router(router, prefix=prefix)
 
+    def static(
+        self,
+        path: str,
+        directory: str,
+        *,
+        html: bool = False,
+        max_age: int = 3600,
+        immutable_max_age: int = 31_536_000,
+        name: str | None = None,
+    ) -> None:
+        """Serve static files from ``directory`` under ``path``.
+
+        ``path`` should end in a wildcard segment, e.g. ``/assets/{filepath:path}``.
+        A bare mount point like ``/assets`` is expanded automatically.
+        Missing files always return a genuine 404. Filenames that look
+        content-hashed (``app.9f8c1a2b.js``) get ``Cache-Control: immutable``;
+        everything else gets a short ``max-age``. See ``shakti.staticfiles``.
+        """
+        from shakti.staticfiles import StaticFiles
+
+        if "{filepath" not in path:
+            path = path.rstrip("/") + "/{filepath:path}"
+        handler = StaticFiles(
+            directory,
+            html=html,
+            max_age=max_age,
+            immutable_max_age=immutable_max_age,
+        )
+        self.router.add_route(path, handler.__call__, methods=["GET"], name=name)
+
     # ------------------------------------------------------------------
     # Middleware & error handling
     # ------------------------------------------------------------------

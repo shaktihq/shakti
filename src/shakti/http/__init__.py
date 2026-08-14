@@ -2,6 +2,7 @@
 
 from shakti.http.request import Request
 from shakti.http.response import (
+    FileResponse,
     HTMLResponse,
     JSONResponse,
     PlainTextResponse,
@@ -10,6 +11,7 @@ from shakti.http.response import (
 )
 
 __all__ = [
+    "FileResponse",
     "HTMLResponse",
     "JSONResponse",
     "PlainTextResponse",

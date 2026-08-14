@@ -16,6 +16,7 @@ from shakti.docs import DocumentAI
 from shakti.exceptions import ConfigError, HTTPException, RouteError, ShaktiError
 from shakti.http.request import Request
 from shakti.http.response import (
+    FileResponse,
     HTMLResponse,
     JSONResponse,
     PlainTextResponse,
@@ -25,6 +26,7 @@ from shakti.http.response import (
 from shakti.monitoring import Monitor
 from shakti.routing.route import Route
 from shakti.routing.router import Router
+from shakti.staticfiles import StaticFiles
 from shakti.websocket import WebSocket, WebSocketDisconnect
 from shakti.workflows import WorkflowEngine
 
@@ -39,6 +41,7 @@ __all__ = [
     "Container",
     "Depends",
     "DocumentAI",
+    "FileResponse",
     "HTMLResponse",
     "HTTPException",
     "JSONResponse",
@@ -57,6 +60,7 @@ __all__ = [
     "Secret",
     "Shakti",
     "ShaktiError",
+    "StaticFiles",
     "UploadFile",
     "User",
     "WebSocket",

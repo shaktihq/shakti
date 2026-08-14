@@ -2,8 +2,11 @@
 
 from __future__ import annotations
 
+import asyncio
 import json as jsonlib
+import os
 from collections.abc import Mapping
+from mimetypes import guess_type
 from typing import Any
 
 from shakti.datastructures import MutableHeaders
@@ -119,6 +122,86 @@ class JSONResponse(Response):
         return jsonlib.dumps(
             content, ensure_ascii=False, separators=(",", ":"), default=str
         ).encode("utf-8")
+
+
+class FileResponse(Response):
+    """Streams a file from disk with ``ETag``/``Last-Modified`` validators.
+
+    Callers are responsible for cache-control policy (see
+    ``shakti.staticfiles.StaticFiles``); this class only sets the headers
+    that describe the file itself.
+    """
+
+    chunk_size = 64 * 1024
+
+    def __init__(
+        self,
+        path: str,
+        *,
+        status_code: int = 200,
+        headers: Mapping[str, str] | None = None,
+        media_type: str | None = None,
+        filename: str | None = None,
+        stat_result: os.stat_result | None = None,
+    ) -> None:
+        self.path = path
+        self.filename = filename
+        if media_type is None:
+            media_type, _ = guess_type(filename or path)
+            media_type = media_type or "application/octet-stream"
+        self.stat_result = stat_result if stat_result is not None else os.stat(path)
+        super().__init__(b"", status_code=status_code, headers=headers, media_type=media_type)
+        self.headers.setdefault("content-length", str(self.stat_result.st_size))
+        self.headers.setdefault("last-modified", _http_date(self.stat_result.st_mtime))
+        self.headers.setdefault("etag", _make_etag(self.stat_result))
+        if self.filename:
+            self.headers.setdefault(
+                "content-disposition", f'inline; filename="{self.filename}"'
+            )
+
+    def render(self, content: Any) -> bytes:
+        return b""
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        await send(
+            {
+                "type": "http.response.start",
+                "status": self.status_code,
+                "headers": self.headers.raw,
+            }
+        )
+        if self.status_code in (204, 304) or scope.get("method") == "HEAD":
+            await send({"type": "http.response.body", "body": b"", "more_body": False})
+            return
+        sent_any = False
+        stream = await asyncio.to_thread(open, self.path, "rb")
+        try:
+            chunk = await asyncio.to_thread(stream.read, self.chunk_size)
+            while chunk:
+                sent_any = True
+                next_chunk = await asyncio.to_thread(stream.read, self.chunk_size)
+                await send(
+                    {
+                        "type": "http.response.body",
+                        "body": chunk,
+                        "more_body": bool(next_chunk),
+                    }
+                )
+                chunk = next_chunk
+        finally:
+            await asyncio.to_thread(stream.close)
+        if not sent_any:
+            await send({"type": "http.response.body", "body": b"", "more_body": False})
+
+
+def _http_date(timestamp: float) -> str:
+    from email.utils import formatdate
+
+    return formatdate(timestamp, usegmt=True)
+
+
+def _make_etag(stat_result: os.stat_result) -> str:
+    return f'"{stat_result.st_mtime_ns:x}-{stat_result.st_size:x}"'
 
 
 class RedirectResponse(Response):
