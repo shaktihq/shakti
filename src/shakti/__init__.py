@@ -58,6 +58,7 @@ __all__ = [
     "Router",
     "SSEResponse",
     "Secret",
+    "SecurityHeadersMiddleware",
     "Shakti",
     "ShaktiError",
     "StaticFiles",
@@ -73,5 +74,6 @@ __all__ = [
 from shakti.cache import Cache
 from shakti.mailer import Mailer
 from shakti.middleware.ratelimit import RateLimitMiddleware
+from shakti.middleware.security import SecurityHeadersMiddleware
 from shakti.openapi import OpenAPI
 from shakti.upload import UploadFile

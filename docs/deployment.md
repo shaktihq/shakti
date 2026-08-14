@@ -53,9 +53,9 @@ monitor.init_app(app)
 
 Add your own checks (DB connectivity, AI provider reachability) with `@monitor.health_check(name)` so readiness actually reflects whether the app can serve traffic.
 
-## CORS and rate limiting
+## CORS, security headers, and rate limiting
 
-If the app is called from a browser on a different origin, add `CORSMiddleware` explicitly — set `allow_origins` to your real frontend origin(s) in production rather than leaving the `["*"]` default. Consider `RateLimitMiddleware` for public endpoints. See [Middleware](core/middleware.md).
+If the app is called from a browser on a different origin, add `CORSMiddleware` explicitly — set `allow_origins` to your real frontend origin(s) in production rather than leaving the `["*"]` default. Add `SecurityHeadersMiddleware` for HSTS/`X-Frame-Options`/`X-Content-Type-Options`/etc. — HSTS only fires when the scope's scheme is `https`, so double check TLS-terminating proxy header handling if it isn't showing up. Consider `RateLimitMiddleware` for public endpoints. See [Middleware](core/middleware.md).
 
 ## Static assets
 
@@ -75,6 +75,7 @@ Use `config.secret(key)` rather than `config.get(key)` for credentials — its `
 - Real database URL via `DATABASE_URL` (not SQLite, for anything concurrent)
 - Migrations applied before the new version receives traffic
 - `CORSMiddleware` origins locked down to real frontend domain(s)
+- `SecurityHeadersMiddleware` added, HSTS confirmed reaching clients (proxy scheme headers set correctly)
 - Liveness/readiness probes wired to your orchestrator
 - Secrets via `config.secret()` / environment / secret files, never committed to `config/settings.yaml`
 - A process manager or orchestrator restarting workers, not `--reload`

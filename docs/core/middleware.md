@@ -74,6 +74,42 @@ app.add_middleware(RateLimitMiddleware, requests=100, window=60, by="ip")
 
 A sliding-window limiter keyed by client IP (`by="ip"`) or by IP+route (`by="route"`). Requests over the limit get `429` with `Retry-After` and `X-RateLimit-*` headers; requests under the limit still get `X-RateLimit-Limit` / `X-RateLimit-Remaining` set. State is in-process — for multi-worker deployments, put a shared store (e.g. Redis) behind a custom middleware instead.
 
+### `SecurityHeadersMiddleware`
+
+```python
+from shakti import SecurityHeadersMiddleware
+
+app.add_middleware(SecurityHeadersMiddleware)
+```
+
+Adds common security-related response headers, on by default with conservative values:
+
+| Header | Default |
+|---|---|
+| `Strict-Transport-Security` | `max-age=31536000; includeSubDomains` — only sent when the request scheme is `https` |
+| `X-Frame-Options` | `DENY` |
+| `X-Content-Type-Options` | `nosniff` |
+| `Referrer-Policy` | `strict-origin-when-cross-origin` |
+| `Content-Security-Policy` | not set (opt-in — app-specific) |
+| `Permissions-Policy` | not set (opt-in) |
+
+Every option can be tuned or disabled:
+
+```python
+app.add_middleware(
+    SecurityHeadersMiddleware,
+    hsts_max_age=63_072_000,
+    hsts_preload=True,
+    content_security_policy="default-src 'self'",
+    permissions_policy="geolocation=(), microphone=()",
+    frame_options=None,   # omit the header entirely
+)
+```
+
+It only ever sets a header if the handler hasn't already set one with the same name — so a response that needs a different value (e.g. `X-Frame-Options: SAMEORIGIN` for one embeddable page) can override it per-route without fighting the middleware.
+
+`Strict-Transport-Security` is gated on `request.scope["scheme"] == "https"` so it's never sent to plain-HTTP local dev. If you're behind a reverse proxy that terminates TLS, make sure it (or your ASGI server's proxy-header handling, e.g. `uvicorn --proxy-headers`) sets the scope's scheme to `https` correctly — otherwise HSTS will silently never be sent.
+
 ### `RequestLoggingMiddleware`
 
 ```python
