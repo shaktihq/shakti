@@ -8,6 +8,7 @@ import pytest_asyncio
 
 from shakti import Shakti
 from shakti.admin import Admin
+from shakti.admin.helpers import to_csv
 from shakti.auth import Auth
 from shakti.auth.models import User
 from shakti.orm import Base, Database
@@ -177,6 +178,41 @@ def test_export_csv(client, admin_user):
     assert r.status_code == 200
     assert b"email" in r.content
     assert b"admin@test.dev" in r.content
+
+
+def test_admin_requires_secret_key_without_auth(db):
+    """Regression: Admin must not fall back to a hardcoded public secret
+    key when auth= isn't given — that would let anyone forge an admin
+    session cookie for a deployment that only passed Admin(db)."""
+    with pytest.raises(ValueError, match="secret_key"):
+        Admin(db)
+
+
+def test_admin_accepts_explicit_secret_key_without_auth(db):
+    admin = Admin(db, secret_key="a-real-secret")
+    assert admin.secret_key == "a-real-secret"
+
+
+def test_csv_export_neutralizes_formula_injection():
+    """Regression: a cell value starting with =, +, -, or @ must be
+    prefixed with a single quote so spreadsheet apps don't execute it
+    as a formula (CWE-1236) when an admin opens an exported CSV."""
+    csv_text = to_csv(
+        ["name"],
+        [
+            ['=HYPERLINK("http://evil.example","click")'],
+            ["+1+1"],
+            ["-1+1"],
+            ["@SUM(1,1)"],
+            ["a normal value"],
+        ],
+    )
+    lines = csv_text.strip().splitlines()[1:]  # skip header
+    assert lines[0].startswith("\"'=HYPERLINK")
+    assert lines[1].startswith("'+")
+    assert lines[2].startswith("'-")
+    assert lines[3].startswith("\"'@")
+    assert lines[4] == "a normal value"
 
 
 def test_non_admin_cannot_login(client, auth):

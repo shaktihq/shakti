@@ -47,13 +47,25 @@ class Admin:
         *,
         title: str = "Shakti Admin",
         prefix: str = "/admin",
-        secret_key: str = "admin-secret-change-me",
+        secret_key: str | None = None,
     ) -> None:
+        if auth is not None:
+            resolved_secret_key = auth.secret_key
+        elif secret_key:
+            resolved_secret_key = secret_key
+        else:
+            raise ValueError(
+                "Admin: secret_key is required when auth is not provided "
+                "(pass auth=... to reuse its secret_key, or secret_key=... "
+                "explicitly — there is no default, since a shared, "
+                "publicly-known default would let anyone forge an admin "
+                "session cookie)"
+            )
         self.db = db
         self.auth = auth
         self.title = title
         self.prefix = prefix
-        self.secret_key = auth.secret_key if auth else secret_key
+        self.secret_key = resolved_secret_key
         self._registry: dict[str, ModelAdmin] = {}
 
     def register(
