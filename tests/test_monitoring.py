@@ -227,6 +227,41 @@ def test_custom_health_check():
     assert "database" in names
 
 
+def test_endpoint_metrics_group_by_route_template_not_raw_path():
+    """Regression: per-endpoint stats must key on the route's path template
+    (e.g. "/items/{id:int}"), not the raw request path — otherwise every
+    unique id creates its own permanent, never-evicted dict entry."""
+    app, monitor = _make_app()
+
+    @app.get("/items/{id:int}")
+    async def get_item(id: int) -> dict:
+        return {"id": id}
+
+    client = TestClient(app)
+    for item_id in range(1, 51):
+        client.get(f"/items/{item_id}")
+
+    endpoints = monitor.metrics.endpoints(limit=100)
+    matching = [e for e in endpoints if e["method"] == "GET" and "items" in e["path"]]
+    assert len(matching) == 1
+    assert matching[0]["path"] == "/items/{id:int}"
+    assert matching[0]["count"] == 50
+
+
+def test_unmatched_requests_bucket_into_single_entry():
+    """404s must not each create their own permanent per-path entry."""
+    app, monitor = _make_app()
+    client = TestClient(app)
+    for path in ("/nope1", "/nope2", "/nope3"):
+        client.get(path)
+
+    endpoints = monitor.metrics.endpoints(limit=100)
+    unmatched = [e for e in endpoints if e["path"] == "<unmatched>"]
+    assert len(unmatched) == 1
+    assert unmatched[0]["count"] == 3
+    assert not any(e["path"] in ("/nope1", "/nope2", "/nope3") for e in endpoints)
+
+
 def test_metrics_middleware_tracks_requests():
     app, monitor = _make_app()
 

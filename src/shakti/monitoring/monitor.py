@@ -75,8 +75,13 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
             duration_ms = (time.perf_counter() - start) * 1000
+            # Group by the matched route's template (e.g. "/posts/{id:int}"),
+            # not the raw path — otherwise every unique id (or every 404'd
+            # garbage path) creates its own permanent, never-evicted entry.
+            route = request.scope.get("route")
+            path_label = route.path if route is not None else "<unmatched>"
             self._collector.record(
-                request.method, request.path,
+                request.method, path_label,
                 response.status_code, duration_ms
             )
             return response
