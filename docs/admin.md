@@ -25,6 +25,16 @@ Visit `http://localhost:8000/admin/`
 
 Login with any user that has `role: "admin"`.
 
+## Signing key
+
+`Admin(db, auth, ...)` reuses `auth.secret_key` to sign the admin session cookie — the usual setup, no extra config. If you're not passing `auth=`, you must pass `secret_key=` explicitly:
+
+```python
+admin = Admin(db, secret_key=config.require("admin.secret_key"))
+```
+
+There is no default secret key — omitting both `auth` and `secret_key` raises `ValueError` at startup rather than silently signing sessions with a fallback, since a shared default would let anyone forge an admin session cookie.
+
 ## Features
 
 - Dark mode and light mode toggle
@@ -44,3 +54,10 @@ Login with any user that has `role: "admin"`.
 | `search_fields` | `[]` | Fields to search on |
 | `readonly_fields` | `["id"]` | Non-editable fields |
 | `list_per_page` | `25` | Records per page |
+
+Any column with a `server_default` — e.g. `TimestampMixin`'s `created_at`/`updated_at` — is automatically treated as read-only too, on top of whatever you list in `readonly_fields`. Those columns are database-managed; there's nothing meaningful for the form to submit for them.
+
+## Security
+
+- All field values, search queries, and activity-log entries are HTML-escaped before rendering — data from regular app users (not just admins) can safely be displayed in list/edit views and the dashboard without risking script injection.
+- CSV export sanitizes cells that start with `=`, `+`, `-`, or `@` so an exported file can't execute a formula when opened in Excel/Sheets/LibreOffice.

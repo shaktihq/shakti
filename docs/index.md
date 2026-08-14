@@ -30,7 +30,7 @@ hide:
 
 <div class="stats-bar">
   <div class="stat-item">
-    <div class="stat-number">211</div>
+    <div class="stat-number">249</div>
     <div class="stat-label">Tests Passing</div>
   </div>
   <div class="stat-item">
@@ -38,7 +38,7 @@ hide:
     <div class="stat-label">Modules</div>
   </div>
   <div class="stat-item">
-    <div class="stat-number">0.2.0</div>
+    <div class="stat-number">0.2.5</div>
     <div class="stat-label">Latest Version</div>
   </div>
   <div class="stat-item">

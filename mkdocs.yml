@@ -96,6 +96,7 @@ nav:
   - Monitoring: monitoring.md
   - CLI Reference: cli.md
   - Deployment: deployment.md
+  - Changelog: changelog.md
 
 markdown_extensions:
   - pymdownx.highlight:
