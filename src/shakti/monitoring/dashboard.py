@@ -2,7 +2,19 @@
 
 from __future__ import annotations
 
+import html
 from typing import Any
+
+
+def _esc(value: Any) -> str:
+    """HTML-escape a value before interpolating it into the dashboard.
+
+    Health check messages can come from `str(exception)` in a custom
+    check (shakti/monitoring/health.py), which may embed data the check
+    itself pulled from elsewhere (a URL, a response body, ...) — treat
+    anything not a fixed literal in this file as untrusted.
+    """
+    return html.escape(str(value), quote=True)
 
 
 def _status_badge(status: str) -> str:
@@ -51,9 +63,9 @@ def render_dashboard(
     for h in health:
         health_rows += f"""
         <tr class="border-t border-gray-100 dark:border-gray-800">
-          <td class="px-5 py-3 text-sm font-medium text-gray-900 dark:text-white">{h['name']}</td>
+          <td class="px-5 py-3 text-sm font-medium text-gray-900 dark:text-white">{_esc(h['name'])}</td>
           <td class="px-5 py-3">{_status_badge(h['status'])}</td>
-          <td class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{h.get('message','')}</td>
+          <td class="px-5 py-3 text-sm text-gray-500 dark:text-gray-400">{_esc(h.get('message',''))}</td>
           <td class="px-5 py-3 text-xs text-gray-400 font-mono">{h.get('duration_ms',0):.1f}ms</td>
         </tr>"""
     if not health_rows:
@@ -66,7 +78,7 @@ def render_dashboard(
         ep_rows += f"""
         <tr class="border-t border-gray-100 dark:border-gray-800 hover:bg-gray-50 dark:hover:bg-gray-800/40">
           <td class="px-4 py-3">{_method_badge(ep['method'])}</td>
-          <td class="px-4 py-3 text-sm font-mono text-gray-700 dark:text-gray-300">{ep['path']}</td>
+          <td class="px-4 py-3 text-sm font-mono text-gray-700 dark:text-gray-300">{_esc(ep['path'])}</td>
           <td class="px-4 py-3 text-sm text-gray-600 dark:text-gray-400 text-right">{ep['count']}</td>
           <td class="px-4 py-3 text-sm text-right font-mono text-gray-600 dark:text-gray-400">{ep['avg_ms']}ms</td>
           <td class="px-4 py-3 text-sm text-right font-mono text-gray-600 dark:text-gray-400">{ep['max_ms']}ms</td>
@@ -82,7 +94,7 @@ def render_dashboard(
         <tr class="border-t border-gray-100 dark:border-gray-800">
           <td class="px-4 py-2.5 text-xs font-mono text-gray-400">{r['time']}</td>
           <td class="px-4 py-2.5">{_method_badge(r['method'])}</td>
-          <td class="px-4 py-2.5 text-sm font-mono text-gray-600 dark:text-gray-400">{r['path']}</td>
+          <td class="px-4 py-2.5 text-sm font-mono text-gray-600 dark:text-gray-400">{_esc(r['path'])}</td>
           <td class="px-4 py-2.5 text-sm font-bold {_status_color(r['status'])}">{r['status']}</td>
           <td class="px-4 py-2.5 text-xs font-mono text-gray-400">{r['duration_ms']}ms</td>
         </tr>"""
@@ -107,7 +119,7 @@ def render_dashboard(
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="refresh" content="10">
-<title>{title}</title>
+<title>{_esc(title)}</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <script>
 tailwind.config = {{
@@ -130,7 +142,7 @@ tailwind.config = {{
         style="height:56px;display:flex;align-items:center;justify-content:space-between;padding:0 24px;">
   <div class="flex items-center gap-3">
     <div class="flex items-center justify-center rounded-lg bg-brand-600 text-white text-xs font-bold" style="width:28px;height:28px;">PF</div>
-    <span class="font-semibold text-gray-900 dark:text-white">{title}</span>
+    <span class="font-semibold text-gray-900 dark:text-white">{_esc(title)}</span>
     <span class="text-xs text-gray-400">· auto-refreshes every 10s</span>
   </div>
   <div class="flex items-center gap-3">

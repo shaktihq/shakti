@@ -227,6 +227,24 @@ def test_custom_health_check():
     assert "database" in names
 
 
+def test_dashboard_escapes_health_check_message():
+    """Regression: a failing health check's exception message (str(e),
+    which can embed data the check itself pulled from elsewhere — a URL,
+    a response body) must not render as live HTML/script on the
+    dashboard, which by default has no auth in front of it."""
+    app, monitor = _make_app()
+
+    @monitor.health_check("bad")
+    async def check_bad() -> str:
+        raise RuntimeError("<script>alert(1)</script>")
+
+    client = TestClient(app)
+    r = client.get("/monitor/")
+    assert r.status_code == 200
+    assert b"<script>alert(1)</script>" not in r.content
+    assert b"&lt;script&gt;alert(1)&lt;/script&gt;" in r.content
+
+
 def test_endpoint_metrics_group_by_route_template_not_raw_path():
     """Regression: per-endpoint stats must key on the route's path template
     (e.g. "/items/{id:int}"), not the raw request path — otherwise every
@@ -246,6 +264,31 @@ def test_endpoint_metrics_group_by_route_template_not_raw_path():
     assert len(matching) == 1
     assert matching[0]["path"] == "/items/{id:int}"
     assert matching[0]["count"] == 50
+
+
+def test_recent_requests_show_literal_path_while_endpoints_stay_grouped():
+    """Regression: endpoint aggregation groups by route template, but the
+    recent-requests log must still show the literal path that was hit —
+    these are two different views over the same request, not one."""
+    app, monitor = _make_app()
+
+    @app.get("/items/{id:int}")
+    async def get_item(id: int) -> dict:
+        return {"id": id}
+
+    client = TestClient(app)
+    client.get("/items/1")
+    client.get("/items/2")
+
+    recent = monitor.metrics.recent_requests(10)
+    paths = {r["path"] for r in recent if r["path"].startswith("/items/")}
+    assert paths == {"/items/1", "/items/2"}
+
+    endpoints = monitor.metrics.endpoints(limit=100)
+    matching = [e for e in endpoints if "items" in e["path"]]
+    assert len(matching) == 1
+    assert matching[0]["path"] == "/items/{id:int}"
+    assert matching[0]["count"] == 2
 
 
 def test_unmatched_requests_bucket_into_single_entry():

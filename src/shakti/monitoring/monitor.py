@@ -75,14 +75,17 @@ class MetricsMiddleware(BaseHTTPMiddleware):
         try:
             response = await call_next(request)
             duration_ms = (time.perf_counter() - start) * 1000
-            # Group by the matched route's template (e.g. "/posts/{id:int}"),
-            # not the raw path — otherwise every unique id (or every 404'd
-            # garbage path) creates its own permanent, never-evicted entry.
+            # Endpoint aggregation groups by the matched route's template
+            # (e.g. "/posts/{id:int}"), not the raw path — otherwise every
+            # unique id (or every 404'd garbage path) creates its own
+            # permanent, never-evicted entry. The recent-requests log still
+            # shows the literal path that was actually hit.
             route = request.scope.get("route")
-            path_label = route.path if route is not None else "<unmatched>"
+            endpoint_label = route.path if route is not None else "<unmatched>"
             self._collector.record(
-                request.method, path_label,
-                response.status_code, duration_ms
+                request.method, request.path,
+                response.status_code, duration_ms,
+                endpoint=endpoint_label,
             )
             return response
         finally:

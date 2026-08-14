@@ -33,7 +33,23 @@ class MetricsCollector:
         })
         self._by_status: dict[int, int] = defaultdict(int)
 
-    def record(self, method: str, path: str, status: int, duration_ms: float) -> None:
+    def record(
+        self,
+        method: str,
+        path: str,
+        status: int,
+        duration_ms: float,
+        *,
+        endpoint: str | None = None,
+    ) -> None:
+        """Record one request.
+
+        ``path`` is the literal request path, shown as-is in
+        ``recent_requests()``. ``endpoint`` (defaults to ``path``) is what
+        per-endpoint stats are grouped by — pass the matched route's
+        template (e.g. ``/posts/{id:int}``) so the group count stays
+        bounded by route count instead of growing per unique id.
+        """
         rec = RequestRecord(method=method, path=path, status_code=status, duration_ms=duration_ms)
         self._requests.appendleft(rec)
         self._total += 1
@@ -42,7 +58,7 @@ class MetricsCollector:
         if status >= 500:
             self._errors += 1
 
-        key = f"{method} {path}"
+        key = f"{method} {endpoint if endpoint is not None else path}"
         ep = self._by_endpoint[key]
         ep["count"] += 1
         ep["total_ms"] += duration_ms

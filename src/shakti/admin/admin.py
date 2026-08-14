@@ -14,7 +14,7 @@ Then visit http://127.0.0.1:8000/admin
 
 from __future__ import annotations
 
-from datetime import UTC
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 from sqlalchemy import or_, select
@@ -127,7 +127,7 @@ class Admin:
         return user
 
     def _admin_token(self, user: User) -> str:
-        from datetime import datetime, timedelta
+        from datetime import timedelta
 
         import jwt
         payload = {
@@ -149,6 +149,12 @@ class Admin:
             return float(raw)
         if ft == "checkbox":
             return raw.lower() in ("true", "1", "on", "yes")
+        if ft == "datetime":
+            # <input type="datetime-local"> submits "YYYY-MM-DDTHH:MM"
+            # (no timezone) — treat it as UTC so it matches columns
+            # declared DateTime(timezone=True) instead of raising a
+            # naive/aware mismatch (or, on SQLite, a raw unparsed string).
+            return datetime.fromisoformat(raw).replace(tzinfo=UTC)
         return raw
 
     # ------------------------------------------------------------------

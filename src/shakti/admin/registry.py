@@ -60,11 +60,17 @@ class ModelAdmin:
                 input_type = "datetime"
             else:
                 input_type = "text"
+            # A column with a server_default (e.g. TimestampMixin's
+            # created_at/updated_at, server_default=func.now()) is managed
+            # by the database, not the admin user — treat it as read-only
+            # rather than a required field the create/edit form can never
+            # satisfy (there's no value to submit; the DB supplies one).
+            server_managed = col.server_default is not None
             result.append({
                 "name": col.key,
                 "type": input_type,
                 "nullable": col.nullable,
                 "primary_key": col.primary_key,
-                "readonly": col.key in self.readonly_fields,
+                "readonly": col.key in self.readonly_fields or server_managed,
             })
         return result

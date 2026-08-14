@@ -332,3 +332,53 @@ def test_dashboard_activity_log_escapes_field_values():
     html = render_dashboard(stats=[], activity=[entry], models_slugs=[], title="Test Admin")
     assert _XSS_PAYLOAD not in html
     assert "&lt;script&gt;alert(1)&lt;/script&gt;" in html
+
+
+# ---------------------------------------------------------------------------
+# Server-managed (TimestampMixin) field regression tests
+#
+# get_fields() previously presented created_at/updated_at as required,
+# hand-editable fields with no admin UI conversion for datetime input —
+# submitting the edit form always failed, either with a SQLite TypeError
+# (raw "YYYY-MM-DDTHH:MM" string passed to a DateTime column) or a
+# "created_at is required" validation error if the fields were omitted.
+# ---------------------------------------------------------------------------
+
+def test_server_managed_timestamp_fields_are_readonly():
+    from shakti.admin.registry import ModelAdmin
+
+    ma = ModelAdmin(model=User)
+    fields = {f["name"]: f for f in ma.get_fields()}
+    assert fields["created_at"]["readonly"] is True
+    assert fields["updated_at"]["readonly"] is True
+    assert fields["email"]["readonly"] is False
+
+
+def test_editing_a_user_via_admin_form_actually_succeeds(client, admin_user, auth):
+    async def _create():
+        return await auth.register_user(
+            email="editme@test.dev", username="editme", password="pass", role="user",
+        )
+    target = asyncio.run(_create())
+
+    token = _get_token(client, admin_user)
+    r = client.post(
+        f"/admin/users/{target.id}",
+        data={"email": target.email, "username": "renamed", "role": "user", "is_active": "true"},
+        headers={"cookie": f"shakti_admin={token}"},
+    )
+    assert r.status_code in (302, 307), r.text
+
+    r = client.get(f"/admin/users/{target.id}", headers={"cookie": f"shakti_admin={token}"})
+    assert r.status_code == 200
+    assert b"renamed" in r.content
+
+
+def test_datetime_field_without_server_default_is_parsed_correctly():
+    """A developer-defined datetime column (no server_default) is still
+    admin-editable — _cast_form_value must convert the datetime-local
+    string into a real datetime, not pass it through as raw text."""
+    admin = Admin.__new__(Admin)  # no db/auth needed for this pure method
+    meta = {"type": "datetime"}
+    result = admin._cast_form_value("2024-06-15T14:30", meta)
+    assert result == datetime(2024, 6, 15, 14, 30, tzinfo=UTC)
