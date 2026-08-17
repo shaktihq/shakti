@@ -108,3 +108,21 @@ app.static("/assets", "dist/assets")
 ```python
 app.static("/", "dist", html=True)  # SPA served from dist/, real 404s for missing assets
 ```
+
+### Manifest-aware caching
+
+The filename-pattern check above is a guess — good enough for typical builds, but a mutable file that happens to have a hash-like name would be wrongly cached forever. Pass `immutable_manifest` to make it exact instead: it becomes the sole source of truth for which files count as immutable.
+
+```python
+app.static("/assets", "dist/assets", immutable_manifest="dist/manifest.json")
+```
+
+Accepts:
+
+- a path (or `Path`) to a JSON manifest file,
+- a dict — either Vite's shape (`{"src/main.ts": {"file": "app.4889e19a.js", "css": [...], "assets": [...]}}`) or a flat Webpack-style `{name: hashed_name}` map, auto-detected per entry,
+- or a plain iterable of hashed filenames you've already computed yourself.
+
+Only basenames are compared, so it doesn't matter whether the manifest's paths are nested differently from how you're serving them. Anything not listed in the manifest — including a file whose name coincidentally matches the fingerprint pattern — gets the regular short-lived `max_age` instead of `immutable`.
+
+This also does the right thing across a rolling deployment: an old build's still-on-disk hashed file won't be in the *new* manifest, so it falls back to short-lived caching rather than immutable. That's a small efficiency cost for the outgoing build's assets, not a correctness issue — mixed-version clients still get the right bytes.

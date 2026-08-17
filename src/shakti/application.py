@@ -4,7 +4,8 @@ from __future__ import annotations
 
 import logging
 import traceback
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterable, Mapping, Sequence
+from pathlib import Path
 from typing import Any
 
 from shakti.config.settings import Config
@@ -138,6 +139,7 @@ class Shakti:
         html: bool = False,
         max_age: int = 3600,
         immutable_max_age: int = 31_536_000,
+        immutable_manifest: str | Path | Mapping[str, Any] | Iterable[str] | None = None,
         name: str | None = None,
     ) -> None:
         """Serve static files from ``directory`` under ``path``.
@@ -146,7 +148,9 @@ class Shakti:
         A bare mount point like ``/assets`` is expanded automatically.
         Missing files always return a genuine 404. Filenames that look
         content-hashed (``app.9f8c1a2b.js``) get ``Cache-Control: immutable``;
-        everything else gets a short ``max-age``. See ``shakti.staticfiles``.
+        everything else gets a short ``max-age``. Pass ``immutable_manifest``
+        (a bundler manifest path/dict, or a set of hashed filenames) to make
+        that exact instead of pattern-guessed. See ``shakti.staticfiles``.
         """
         from shakti.staticfiles import StaticFiles
 
@@ -157,6 +161,7 @@ class Shakti:
             html=html,
             max_age=max_age,
             immutable_max_age=immutable_max_age,
+            immutable_manifest=immutable_manifest,
         )
         self.router.add_route(path, handler.__call__, methods=["GET"], name=name)
 

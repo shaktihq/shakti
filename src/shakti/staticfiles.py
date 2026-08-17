@@ -9,8 +9,11 @@ reference still surfaces as a 404 instead of a silently wrong 200.
 
 from __future__ import annotations
 
+import json
 import re
+from collections.abc import Iterable, Mapping
 from pathlib import Path
+from typing import Any
 
 from shakti.exceptions import HTTPException
 from shakti.http.request import Request
@@ -24,6 +27,50 @@ def _looks_fingerprinted(name: str) -> bool:
     return bool(_FINGERPRINT_RE.search(name))
 
 
+def _extract_hashed_filenames(data: Mapping[str, Any]) -> set[str]:
+    """Pull hashed output filenames out of a bundler manifest dict.
+
+    Supports two common shapes, auto-detected per-entry:
+
+    - Vite-style: ``{"src/main.ts": {"file": "assets/main.4889e19a.js",
+      "css": ["assets/main.a1b2c3d4.css"], "assets": [...]}}`` — collects
+      ``file``, plus every entry in ``css``/``assets``.
+    - Flat/Webpack-style: ``{"main.js": "main.4889e19a.js"}`` — the value
+      itself is the hashed filename.
+
+    Only the basename is kept, since that's what's compared against the
+    requested file's name regardless of how deep the manifest's paths are.
+    """
+    names: set[str] = set()
+    for value in data.values():
+        if isinstance(value, str):
+            names.add(Path(value).name)
+        elif isinstance(value, Mapping):
+            file_entry = value.get("file")
+            if isinstance(file_entry, str):
+                names.add(Path(file_entry).name)
+            for key in ("css", "assets"):
+                for entry in value.get(key) or ():
+                    if isinstance(entry, str):
+                        names.add(Path(entry).name)
+    return names
+
+
+def _load_immutable_manifest(manifest: Any) -> set[str] | None:
+    """Normalize the ``immutable_manifest`` constructor argument into a
+    set of basenames known to be genuinely content-hashed, or ``None`` if
+    no manifest was given (caller should fall back to the filename regex).
+    """
+    if manifest is None:
+        return None
+    if isinstance(manifest, (str, Path)):
+        data = json.loads(Path(manifest).read_text(encoding="utf-8"))
+        return _extract_hashed_filenames(data)
+    if isinstance(manifest, Mapping):
+        return _extract_hashed_filenames(manifest)
+    return {Path(name).name for name in manifest}
+
+
 class StaticFiles:
     """ASGI-style endpoint that serves files out of ``directory``.
 
@@ -33,8 +80,29 @@ class StaticFiles:
 
     ``max_age`` / ``immutable_max_age`` control ``Cache-Control`` for
     ordinary vs. fingerprinted (content-hashed) files respectively.
-    Fingerprinted files are detected by filename pattern (e.g.
-    ``main.9f8c1a2b.js``) and served with ``public, immutable``.
+
+    By default, "fingerprinted" is a filename-pattern guess (e.g.
+    ``main.9f8c1a2b.js``) — good enough for most setups, but a mutable
+    file that happens to look hash-like would be wrongly cached forever.
+    Pass ``immutable_manifest`` to make this exact instead of guessed:
+    a bundler's manifest (Vite's ``manifest.json``, a Webpack
+    ``{name: hashed_name}`` map, a plain iterable of hashed filenames, or
+    a path to a JSON file in either shape) becomes the sole source of
+    truth for which files get ``immutable`` — anything not listed in it
+    gets the regular short-lived ``max_age`` instead, even if its name
+    happens to match the fingerprint pattern.
+
+    This also does the right thing across a rolling deployment: an old
+    build's still-on-disk hashed asset won't be in the *new* manifest, so
+    it falls back to short-lived caching rather than immutable — a small
+    efficiency cost for assets from a superseded build, not a
+    correctness issue (mixed-version clients still get the right bytes,
+    just with a shorter cache lifetime on the outgoing build's files).
+
+    Usage::
+
+        app.static("/assets/{filepath:path}", directory="dist/assets",
+                   immutable_manifest="dist/manifest.json")
     """
 
     def __init__(
@@ -44,6 +112,7 @@ class StaticFiles:
         html: bool = False,
         max_age: int = 3600,
         immutable_max_age: int = 31_536_000,
+        immutable_manifest: str | Path | Mapping[str, Any] | Iterable[str] | None = None,
     ) -> None:
         self.directory = Path(directory).resolve()
         if not self.directory.is_dir():
@@ -51,6 +120,7 @@ class StaticFiles:
         self.html = html
         self.max_age = max_age
         self.immutable_max_age = immutable_max_age
+        self._immutable_names = _load_immutable_manifest(immutable_manifest)
 
     def _resolve(self, filepath: str) -> Path:
         """Resolve ``filepath`` under ``directory``, rejecting traversal."""
@@ -61,8 +131,13 @@ class StaticFiles:
             raise HTTPException(404) from None
         return candidate
 
+    def _is_immutable(self, name: str) -> bool:
+        if self._immutable_names is not None:
+            return name in self._immutable_names
+        return _looks_fingerprinted(name)
+
     def _cache_control(self, name: str) -> str:
-        if _looks_fingerprinted(name):
+        if self._is_immutable(name):
             return f"public, max-age={self.immutable_max_age}, immutable"
         return f"public, max-age={self.max_age}"
 
