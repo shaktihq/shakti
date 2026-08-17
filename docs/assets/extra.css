@@ -166,3 +166,11 @@
 .md-typeset h1:first-child {
   display: none;
 }
+
+/* The logo already contains the "SHAKTI" wordmark — hide the
+   redundant site-name text next to it in the header. The page-title
+   text that appears next to the logo on scroll (second .md-header__topic)
+   is left untouched. */
+.md-header__topic:first-child {
+  display: none;
+}
