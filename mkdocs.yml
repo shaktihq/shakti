@@ -8,7 +8,7 @@ edit_uri: ""
 theme:
   name: material
   logo: assets/logo.png
-  favicon: assets/logo.png
+  favicon: assets/favicon.png
   palette:
     - scheme: slate
       primary: deep purple
