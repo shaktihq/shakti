@@ -1,3 +1,7 @@
+---
+description: JWT authentication in Shakti Python Framework — built-in register, login, refresh, and logout routes with bcrypt password hashing.
+---
+
 # JWT Auth
 
 `Auth` wires up JWT-based authentication — registration, login, refresh, logout — backed by your ORM's `User` model, with almost no boilerplate.

@@ -1,3 +1,7 @@
+---
+description: AI chat and completion in Shakti Python Framework — single-turn and multi-turn conversations with Claude or OpenAI, plus token usage.
+---
+
 # Chat & Completion
 
 ## Simple chat

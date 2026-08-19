@@ -1,3 +1,7 @@
+---
+description: Async database access in Shakti Python Framework — SQLAlchemy engine setup, session lifecycle, and dependency-injected sessions.
+---
+
 # Database
 
 `Database` wraps an async SQLAlchemy engine + session factory and wires session lifecycle into Shakti's startup/shutdown hooks and DI container.

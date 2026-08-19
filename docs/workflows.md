@@ -1,3 +1,8 @@
+---
+title: Background Jobs & Workflows
+description: Background jobs in Shakti Python Framework — an async job queue with automatic retries, exponential backoff, and interval scheduling.
+---
+
 # Workflows
 
 `WorkflowEngine` is an in-process background job queue with retries plus a recurring-task scheduler — no separate broker (Redis, RabbitMQ) required.

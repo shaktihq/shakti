@@ -1,3 +1,7 @@
+---
+description: Database migrations in Shakti Python Framework — Alembic integration via the shakti CLI, from makemigrations to deploy.
+---
+
 # Migrations
 
 Shakti wraps [Alembic](https://alembic.sqlalchemy.org/) so you get schema migrations without hand-writing `alembic.ini`/`env.py` — everything's driven from the `shakti` CLI.

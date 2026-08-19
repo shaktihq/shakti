@@ -1,3 +1,7 @@
+---
+description: Defining ORM models in Shakti Python Framework — SQLAlchemy 2.x declarative models, TimestampMixin, and typed columns with Field.
+---
+
 # Models
 
 Models are SQLAlchemy 2.x declarative classes built on Shakti's `Base`, using `Mapped[T]` annotations and `Field` (Shakti's alias for `mapped_column`).

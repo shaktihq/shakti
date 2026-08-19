@@ -1,3 +1,7 @@
+---
+description: The Repository pattern in Shakti Python Framework — CRUD helpers (get, filter, create, update, delete) for async ORM models.
+---
+
 # Repository
 
 `Repository` wraps common CRUD operations for a model + session pair so handlers don't repeat `select()` boilerplate.

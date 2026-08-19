@@ -1,3 +1,7 @@
+---
+description: Release notes and changelog for the Shakti Python Framework — new features, fixes, and security updates by version.
+---
+
 # Changelog
 
 ## 0.2.5

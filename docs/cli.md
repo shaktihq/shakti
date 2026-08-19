@@ -1,3 +1,7 @@
+---
+description: Shakti Python Framework CLI reference — shakti new, run, generate, makemigrations, migrate, and db commands.
+---
+
 # CLI Reference
 
 The `shakti` command handles project scaffolding, running the dev server, and code/migration generation.

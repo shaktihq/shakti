@@ -1,3 +1,7 @@
+---
+description: Routing in Shakti Python Framework — typed path parameters, route converters, middleware groups, WebSocket routes, and static file serving.
+---
+
 # Routing
 
 Routes are registered with decorators on the app (or on a `Router` you mount later). Handlers can be plain functions returning dicts, strings, `Response` objects, or `(body, status_code)` tuples — see [Request & Response](request-response.md).

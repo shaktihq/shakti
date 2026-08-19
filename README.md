@@ -1,35 +1,31 @@
-# Shakti
-
+# Shakti Python Framework
 
 [![Docs](https://img.shields.io/badge/docs-shakti.adityabhat.in-purple)](https://shakti.adityabhat.in)
-[![PyPI](https://img.shields.io/pypi/v/shakti-framework)](https://pypi.org/project/shakti-framework/)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
-[![Tests](https://github.com/shaktihq/shakti/actions/workflows/tests.yml/badge.svg)](https://github.com/shaktihq/shakti/actions)
-
-📖 **Docs:** https://shakti.adityabhat.in
-
-**An AI-first, async Python web framework.**
-
-> Born in India. Built for the world.
-
-```bash
-pip install "shakti-framework[all]"
-pip install shakti-framework
-```
-
 [![PyPI](https://img.shields.io/pypi/v/shakti-framework)](https://pypi.org/project/shakti-framework/)
 [![Python](https://img.shields.io/pypi/pyversions/shakti-framework)](https://pypi.org/project/shakti-framework/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 [![Tests](https://github.com/shaktihq/shakti/actions/workflows/tests.yml/badge.svg)](https://github.com/shaktihq/shakti/actions)
 
+📖 **Documentation:** https://shakti.adityabhat.in
+
+**Shakti** is an open-source, **AI-first Python web framework** for building modern APIs, web applications, AI agents, and enterprise applications. It's built on async ASGI from the ground up and ships with routing, an async ORM, JWT authentication, an admin panel, and first-class AI integration (Claude and OpenAI) in a single install.
+
+> Born in India. Built for the world. 🇮🇳
+
+```bash
+pip install "shakti-framework[all]"
+```
+
 ---
 
 ## What is Shakti?
 
-Shakti is a modern Python web framework designed for the AI era.
+Shakti Python Framework is a modern **Python web framework** designed for the AI era.
 It gives you everything you need to build production-ready APIs
 — routing, database, auth, AI, background jobs, monitoring —
 all in a single install, zero configuration.
+
+If you've compared **Shakti vs FastAPI** or **Shakti vs Django** and want batteries included without giving up async performance, Shakti is built for that gap. See the [full documentation](https://shakti.adityabhat.in) for guides on the [Shakti admin panel](https://shakti.adityabhat.in/admin/), [ORM](https://shakti.adityabhat.in/orm/database/), [authentication](https://shakti.adityabhat.in/auth/jwt/), and [AI integrations](https://shakti.adityabhat.in/ai/overview/).
 
 ---
 

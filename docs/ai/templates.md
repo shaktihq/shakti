@@ -1,3 +1,7 @@
+---
+description: Reusable prompt templates in Shakti Python Framework — variable substitution plus built-in templates for summarization, translation, and code review.
+---
+
 # Prompt Templates
 
 `PromptTemplate` is a reusable prompt with `{variable}` placeholders and an optional dedicated system prompt — useful for keeping prompt text out of handler logic.

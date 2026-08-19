@@ -1,5 +1,8 @@
-site_name: Shakti
-site_description: AI-first, async Python web framework. Born in India, built for the world.
+site_name: Shakti Python Framework
+site_description: >-
+  Shakti is an open-source AI-first Python web framework for building modern
+  APIs, web applications, AI agents, and enterprise applications.
+site_author: Aditya Bhat
 site_url: https://shakti.adityabhat.in
 repo_url: https://github.com/shaktihq/shakti
 repo_name: shaktihq/shakti
@@ -7,6 +10,7 @@ edit_uri: ""
 
 theme:
   name: material
+  custom_dir: docs/overrides
   logo: assets/logo.png
   favicon: assets/favicon.png
   palette:
@@ -97,6 +101,14 @@ nav:
   - CLI Reference: cli.md
   - Deployment: deployment.md
   - Changelog: changelog.md
+  - Blog:
+    - Overview: blog/index.md
+    - Introducing Shakti Python Framework: blog/introducing-shakti-python-framework.md
+    - Shakti vs FastAPI: blog/shakti-vs-fastapi.md
+    - Shakti vs Django: blog/shakti-vs-django.md
+    - Build a REST API with Shakti: blog/build-rest-api-with-shakti.md
+    - Shakti Admin Panel Walkthrough: blog/shakti-admin-panel.md
+    - Build an AI Agent with Shakti: blog/build-ai-agent-with-shakti.md
 
 markdown_extensions:
   - pymdownx.highlight:
@@ -122,3 +134,6 @@ markdown_extensions:
 plugins:
   - search:
       lang: en
+
+hooks:
+  - docs/hooks.py

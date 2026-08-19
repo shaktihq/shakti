@@ -1,3 +1,7 @@
+---
+description: Build AI agents with Shakti Python Framework — tool-calling agents backed by Anthropic's tool use API, with auto-generated tool schemas.
+---
+
 # Agents
 
 `Agent` gives the model tools it can call — Python functions it decides to invoke, with results fed back in, looping until it produces a final answer. Currently backed by Anthropic's tool-use API specifically.

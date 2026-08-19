@@ -1,3 +1,7 @@
+---
+description: Install Shakti Python Framework with pip. Requires Python 3.12+, with optional extras for the async ORM, JWT authentication, AI providers, and monitoring.
+---
+
 # Installation
 
 Shakti requires **Python 3.12+**.

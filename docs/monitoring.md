@@ -1,3 +1,7 @@
+---
+description: Monitoring in Shakti Python Framework — a live dashboard, health checks, request metrics, and CPU/memory usage with zero configuration.
+---
+
 # Monitoring
 
 Built-in health checks, metrics, and a live dashboard.

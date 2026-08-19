@@ -1,3 +1,7 @@
+---
+description: Middleware in Shakti Python Framework — CORS, rate limiting, security headers, and request logging, plus how to write your own.
+---
+
 # Middleware
 
 Middleware wraps request handling to add cross-cutting behavior — logging, CORS, rate limiting, auth checks — without touching individual handlers.

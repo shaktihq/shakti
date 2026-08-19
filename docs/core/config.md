@@ -1,3 +1,7 @@
+---
+description: Configuration in Shakti Python Framework — layered YAML settings, environment variable interpolation, profiles, and secret handling.
+---
+
 # Configuration
 
 `Config` layers settings from several sources, highest priority first:

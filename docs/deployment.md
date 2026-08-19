@@ -1,3 +1,7 @@
+---
+description: Deploying a Shakti Python Framework app to production — ASGI servers, config profiles, migrations, health checks, and a pre-launch checklist.
+---
+
 # Deployment
 
 Shakti is a plain ASGI app (`shakti.Shakti` implements the ASGI interface directly) — anything that runs an ASGI app can run Shakti. `shakti run` is a dev convenience wrapper around `uvicorn`; in production, run uvicorn (or another ASGI server) yourself with proper process management.

@@ -1,3 +1,7 @@
+---
+description: Document AI in Shakti Python Framework — PDF and image extraction, document Q&A, summarization, and structured data extraction.
+---
+
 # Document AI
 
 `DocumentAI` handles uploading, indexing, querying, summarizing, extracting from, and classifying documents (PDF, images, text) — built on the same [RAG store](ai/rag.md) as the AI module, plus vision-capable extraction for images.

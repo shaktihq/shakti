@@ -1,3 +1,7 @@
+---
+description: Request and Response objects in Shakti Python Framework — headers, query params, JSON bodies, cookies, and error handling.
+---
+
 # Request & Response
 
 ## Request

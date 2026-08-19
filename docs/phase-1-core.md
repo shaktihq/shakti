@@ -1,3 +1,9 @@
+---
+title: Phase 1 Notes (superseded)
+description: Legacy development notes, superseded by the Core section of the Shakti Python Framework documentation.
+robots: noindex, follow
+---
+
 # Phase 1 — Core Framework
 
 ## Application

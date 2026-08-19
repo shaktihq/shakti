@@ -1,3 +1,7 @@
+---
+description: API key authentication in Shakti Python Framework for service-to-service and webhook requests, via the X-API-Key header.
+---
+
 # API Keys
 
 For service-to-service or webhook auth where a JWT login flow doesn't make sense, `Auth` also supports long-lived API keys sent via an `X-API-Key` header.

@@ -1,3 +1,7 @@
+---
+description: Retrieval-augmented generation in Shakti Python Framework — a built-in TF-IDF document store for grounding AI answers, no vector DB required.
+---
+
 # RAG
 
 `ai.rag` is an in-memory retrieval-augmented-generation store: add documents, then ask questions grounded in only what you've added. No external vector database required.

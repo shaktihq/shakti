@@ -1,3 +1,7 @@
+---
+description: Role-based access control in Shakti Python Framework — restrict routes by role with the require_role() dependency.
+---
+
 # RBAC
 
 Shakti's role-based access control is deliberately simple: every `User` has a single `role` string column (default `"user"`), and `Auth.require_role()` gives you a dependency that enforces it.

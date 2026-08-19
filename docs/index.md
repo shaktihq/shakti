@@ -1,4 +1,6 @@
 ---
+title: Shakti Python Framework — AI-First Python Web Framework
+description: Shakti is an open-source AI-first Python web framework for building modern APIs, web applications, AI agents, and enterprise applications.
 hide:
   - navigation
   - toc
@@ -8,11 +10,11 @@ hide:
 
 <div class="hero-badge">🇮🇳 Born in India · Built for the world</div>
 
-<h1>Shakti Framework</h1>
+<h1>Shakti Python Framework</h1>
 
 <p class="hero-subtitle">
-  The AI-first, async Python web framework.<br>
-  Everything you need. One install. Zero config.
+  The AI-first Python web framework, built on async ASGI.<br>
+  Everything you need to build APIs, web applications, and AI agents — one install, zero config.
 </p>
 
 <div class="cta-buttons">
@@ -25,6 +27,10 @@ hide:
 </div>
 
 </div>
+
+---
+
+Shakti Python Framework is an open-source, AI-first **Python web framework** for teams who want an async foundation — routing, an async ORM, authentication, and AI integration — without stitching together a dozen separate libraries. If you've used FastAPI, Flask, or Django, Shakti's [Quick Start](getting-started/quickstart.md) will feel familiar; the [full documentation](getting-started/installation.md) covers everything from your first route to deploying an AI agent in production.
 
 ---
 

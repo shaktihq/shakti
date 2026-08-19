@@ -1,3 +1,7 @@
+---
+description: Dependency injection in Shakti Python Framework — automatic handler parameter binding, the service container, and Depends() for request-scoped dependencies.
+---
+
 # Dependency Injection
 
 Shakti binds handler parameters automatically by inspecting each handler's signature — no decorators needed on the parameters themselves. For every parameter, in order:

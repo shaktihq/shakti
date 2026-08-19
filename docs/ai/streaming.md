@@ -1,3 +1,7 @@
+---
+description: Streaming AI responses in Shakti Python Framework with Server-Sent Events — token-by-token output for chat interfaces.
+---
+
 # Streaming
 
 `ai.stream()` returns an async generator of text chunks as they arrive from the provider — no need to buffer the whole reply before showing anything.

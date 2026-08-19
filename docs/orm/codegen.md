@@ -1,3 +1,7 @@
+---
+description: Generate models and CRUD routers in Shakti Python Framework with one CLI command — shakti generate api, model, or crud.
+---
+
 # Code Generation
 
 `shakti generate` (alias `shakti g`) scaffolds models and CRUD routers from a compact field DSL, so a full REST resource is a one-liner.

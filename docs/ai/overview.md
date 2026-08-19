@@ -1,3 +1,8 @@
+---
+title: AI Overview
+description: Building AI features with Shakti Python Framework — the AI-first Python framework with built-in chat, streaming, RAG, and tool-calling agents.
+---
+
 # AI Overview
 
 `AI` is Shakti's built-in module for chat, streaming, RAG, prompt templates, and tool-calling agents — backed by Anthropic or OpenAI. It's a first-class citizen, not a bolt-on: one object gives you both a Python API and a set of ready-made HTTP routes.

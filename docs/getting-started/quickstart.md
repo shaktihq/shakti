@@ -1,3 +1,7 @@
+---
+description: Quick Start guide for Shakti Python Framework — scaffold a project, add a route, generate a database-backed CRUD API, and enable AI chat in minutes.
+---
+
 # Quick Start
 
 ## Create a project

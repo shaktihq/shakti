@@ -1,3 +1,7 @@
+---
+description: The Shakti admin panel — an auto-generated, dark/light mode admin UI for any model, with search, CSV export, and an activity log. No extra setup.
+---
+
 # Admin Panel
 
 Shakti includes a built-in admin panel — better than Django's.

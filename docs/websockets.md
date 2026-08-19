@@ -1,3 +1,7 @@
+---
+description: WebSockets in Shakti Python Framework — real-time connections with JSON messaging, path parameters, and AI streaming support.
+---
+
 # WebSockets
 
 Shakti has built-in WebSocket support using the ASGI WebSocket protocol.
