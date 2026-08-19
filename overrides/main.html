@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+
+{#
+  SEO additions on top of Material's default template:
+  - exact homepage <title> (bypasses the "{page title} - {site_name}" suffix rule)
+  - Open Graph + Twitter Card meta tags
+  - JSON-LD: WebSite + Person on every page, SoftwareApplication +
+    SoftwareSourceCode on the homepage, BreadcrumbList on inner pages
+  Everything else (nav, search, content rendering) is untouched.
+#}
+
+{% block htmltitle %}
+  {% if page.is_homepage %}
+    <title>Shakti Python Framework — AI-First Python Web Framework</title>
+  {% elif page.meta and page.meta.title %}
+    <title>{{ page.meta.title }} - {{ config.site_name }}</title>
+  {% elif page.title and not page.is_homepage %}
+    <title>{{ page.title | striptags }} - {{ config.site_name }}</title>
+  {% else %}
+    <title>{{ config.site_name }}</title>
+  {% endif %}
+{% endblock %}
+
+{% block extrahead %}
+  {% set seo_description = (page.meta.description if page.meta and page.meta.description else config.site_description) %}
+  {% set seo_title = ("Shakti Python Framework — AI-First Python Web Framework" if page.is_homepage else ((page.meta.title if page.meta and page.meta.title else page.title) ~ " - " ~ config.site_name)) %}
+  {% set seo_url = page.canonical_url or config.site_url %}
+  {% set seo_image = config.site_url ~ "assets/logo.png" %}
+
+  {# Robots override: front matter can set `robots: noindex` on a page
+     (e.g. legacy/duplicate content) without hiding it from readers. #}
+  {% if page.meta and page.meta.robots %}
+    <meta name="robots" content="{{ page.meta.robots }}">
+  {% endif %}
+
+  <meta name="keywords" content="Shakti, Shakti Python Framework, Shakti web framework, Python web framework, AI-first Python framework, Python AI framework, async Python, ASGI framework, REST API framework, Shakti admin panel">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Shakti Python Framework">
+  <meta property="og:title" content="{{ seo_title }}">
+  <meta property="og:description" content="{{ seo_description }}">
+  <meta property="og:url" content="{{ seo_url }}">
+  <meta property="og:image" content="{{ seo_image }}">
+  <meta property="og:locale" content="en_US">
+
+  <!-- Twitter / X Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ seo_title }}">
+  <meta name="twitter:description" content="{{ seo_description }}">
+  <meta name="twitter:image" content="{{ seo_image }}">
+
+  <!-- JSON-LD: WebSite (every page) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": {{ "Shakti Python Framework" | tojson }},
+    "alternateName": {{ ["Shakti", "Shakti Framework", "Shakti Python Web Framework"] | tojson }},
+    "url": {{ config.site_url | tojson }},
+    "description": {{ config.site_description | tojson }},
+    "inLanguage": "en",
+    "publisher": {
+      "@type": "Person",
+      "name": "Aditya Bhat",
+      "url": "https://adityabhat.in"
+    }
+  }
+  </script>
+
+  <!-- JSON-LD: Person (creator) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "Person",
+    "name": "Aditya Bhat",
+    "url": "https://adityabhat.in",
+    "sameAs": [
+      "https://github.com/shaktihq/shakti",
+      "https://linkedin.com/in/aditya-bhat-983b9623b"
+    ],
+    "jobTitle": "Creator, Shakti Python Framework"
+  }
+  </script>
+
+  {% if page.is_homepage %}
+  <!-- JSON-LD: SoftwareApplication (homepage only) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Shakti",
+    "alternateName": {{ ["Shakti Python Framework", "Shakti Web Framework", "Shakti Python Web Framework"] | tojson }},
+    "applicationCategory": "DeveloperApplication",
+    "operatingSystem": "Cross-platform (Linux, macOS, Windows)",
+    "programmingLanguage": "Python",
+    "description": {{ config.site_description | tojson }},
+    "softwareVersion": {{ config.extra.shakti_version | tojson }},
+    "license": "https://opensource.org/licenses/MIT",
+    "url": {{ config.site_url | tojson }},
+    "downloadUrl": "https://pypi.org/project/shakti-framework/",
+    "installUrl": "https://pypi.org/project/shakti-framework/",
+    "codeRepository": "https://github.com/shaktihq/shakti",
+    "author": {
+      "@type": "Person",
+      "name": "Aditya Bhat",
+      "url": "https://adityabhat.in"
+    },
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    },
+    "keywords": "Shakti, Shakti Python Framework, Python web framework, AI-first framework, async Python, ASGI, REST API, admin panel, ORM, JWT authentication"
+  }
+  </script>
+
+  <!-- JSON-LD: SoftwareSourceCode (homepage only) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareSourceCode",
+    "name": "Shakti",
+    "alternateName": "Shakti Python Framework",
+    "description": {{ config.site_description | tojson }},
+    "programmingLanguage": {
+      "@type": "ComputerLanguage",
+      "name": "Python"
+    },
+    "codeRepository": "https://github.com/shaktihq/shakti",
+    "codeSampleType": "full solution",
+    "license": "https://opensource.org/licenses/MIT",
+    "author": {
+      "@type": "Person",
+      "name": "Aditya Bhat"
+    },
+    "runtimePlatform": "Python 3.12+"
+  }
+  </script>
+  {% endif %}
+
+  {% if not page.is_homepage and page.ancestors %}
+  <!-- JSON-LD: BreadcrumbList (documentation pages) -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": {{ config.site_url | tojson }}
+      }
+      {% for ancestor in page.ancestors | reverse %}
+      ,{
+        "@type": "ListItem",
+        "position": {{ loop.index + 1 }},
+        "name": {{ ancestor.title | tojson }}
+      }
+      {% endfor %}
+      ,{
+        "@type": "ListItem",
+        "position": {{ (page.ancestors | length) + 2 }},
+        "name": {{ (page.title | striptags) | tojson }},
+        "item": {{ seo_url | tojson }}
+      }
+    ]
+  }
+  </script>
+  {% endif %}
+{% endblock %}
